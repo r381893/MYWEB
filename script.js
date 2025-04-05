@@ -1,34 +1,30 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsL5tyeeoyvbuYLMb3xGPyGMgOTpqjuktHESDNLQISvGxo1dq1yppRtrhtljcYoWS4/exec';
 
+// 提交留言
 function submitMessage() {
-  const name = document.getElementById("name").value.trim();
-  const message = document.getElementById("message").value.trim();
-
-  if (!message) {
-    document.getElementById("result").innerText = "❌ 留言內容不能為空";
-    return;
-  }
+  const name = document.getElementById("name").value;
+  const message = document.getElementById("message").value;
 
   const formData = new URLSearchParams();
-  formData.append("name", name || "匿名");
+  formData.append("name", name);
   formData.append("message", message);
 
   fetch(SCRIPT_URL, {
     method: "POST",
     body: formData
   })
-  .then(res => res.text())
-  .then(data => {
-    document.getElementById("result").innerText = "✅ " + data;
-    document.getElementById("message").value = ""; // 清空留言輸入框
-    loadMessages(); // 重新載入留言
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById("result").innerText = "❌ 發生錯誤";
-  });
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("result").innerText = "✅ " + data;
+      loadMessages(); // 重新載入留言
+    })
+    .catch(err => {
+      console.error("送出留言錯誤：", err);
+      document.getElementById("result").innerText = "❌ 發生錯誤";
+    });
 }
 
+// 載入留言
 function loadMessages() {
   fetch(SCRIPT_URL)
     .then(res => res.json())
@@ -42,10 +38,9 @@ function loadMessages() {
       });
     })
     .catch(err => {
-      console.error("載入留言時發生錯誤:", err);
-      document.getElementById("messages").innerText = "❌ 無法載入留言";
+      console.error("載入留言時發生錯誤：", err);
+      document.getElementById("result").innerHTML = "❌ <span style='color:red;'>無法載入留言</span>";
     });
 }
 
-// 頁面載入時自動載入留言
 window.onload = loadMessages;
