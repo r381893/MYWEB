@@ -63,6 +63,12 @@
       font-size: 0.9rem;
       color: #666;
     }
+    .ip-box {
+      text-align: center;
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
     #emoji-picker {
       margin-top: 10px;
       margin-bottom: 10px;
@@ -83,6 +89,7 @@
 </head>
 <body>
   <h1>🍰 可愛留言板 🍩</h1>
+  <p class="ip-box" id="ipDisplay">🔍 取得中...</p>
   <div class="counter">
     🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次
     、已有 <span id="msgCount">0</span> 則留言
@@ -195,6 +202,16 @@
       }
       nameSelect.addEventListener("change", updateNameField);
       updateNameField();
+
+      // 顯示使用者 IP
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("ipDisplay").textContent = `🌐 你的 IP 位址是：${data.ip}`;
+        })
+        .catch(() => {
+          document.getElementById("ipDisplay").textContent = `🌐 無法取得 IP`;
+        });
     });
 
     window.onload = loadMessages;
