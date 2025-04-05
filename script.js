@@ -1,5 +1,7 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec
+';
 
+// 發送留言
 function submitMessage() {
   const name = document.getElementById("name").value.trim();
   const message = document.getElementById("message").value.trim();
@@ -20,8 +22,8 @@ function submitMessage() {
     .then(res => res.text())
     .then(data => {
       document.getElementById("result").innerHTML = "<span class='success'>✅ " + data + "</span>";
-      document.getElementById("message").value = "";
-      loadMessages();
+      document.getElementById("message").value = ""; // 清空輸入
+      loadMessages(); // 重新載入
     })
     .catch(err => {
       console.error("留言錯誤：", err);
@@ -29,20 +31,20 @@ function submitMessage() {
     });
 }
 
+// 載入留言
 function loadMessages() {
   fetch(SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
       const container = document.getElementById("messages");
       container.innerHTML = "";
-
       data.reverse().forEach(entry => {
         const div = document.createElement("div");
         div.classList.add("message");
         div.innerHTML = `
           <p>
             <strong>👤 ${entry.name}</strong><br>
-            <span style="color:gray">${entry.time}</span><br>
+            <span style="color: gray;">🕒 ${entry.time}</span><br>
             <span style="white-space: pre-line;">${entry.message}</span>
           </p>
         `;
@@ -50,10 +52,9 @@ function loadMessages() {
       });
     })
     .catch(err => {
-      console.error("載入留言失敗：", err);
+      console.error("載入留言錯誤：", err);
       document.getElementById("result").innerHTML = "<span class='error'>❌ 無法載入留言</span>";
     });
 }
 
 window.onload = loadMessages;
-
