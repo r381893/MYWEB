@@ -1,16 +1,16 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>留言板</title>
+  <title>可愛留言板</title>
   <style>
     body {
       background-image: url('https://images.unsplash.com/photo-1600891965059-47eec72f8f1c');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      font-family: "Microsoft JhengHei", sans-serif;
+      font-family: "Microsoft JhengHei", "Segoe UI Emoji", sans-serif;
       padding: 30px;
       max-width: 700px;
       margin: auto;
@@ -82,6 +82,7 @@
       body {
         padding: 15px;
       }
+
       input, textarea, button {
         font-size: 14px;
       }
@@ -90,10 +91,10 @@
 </head>
 <body>
 
-  <h1>🍩 可愛留言板 🧁</h1>
+  <h1>🧁 可愛留言板 🍩</h1>
 
   <input type="text" id="name" placeholder="你的名字">
-  <textarea id="message" placeholder="說點什麼..."></textarea>
+  <textarea id="message" placeholder="輸入你的留言，可加上表情符號 😄❤️🔥"></textarea>
   <button onclick="submitMessage()">送出留言</button>
 
   <p id="result"></p>
@@ -138,13 +139,20 @@
         .then(data => {
           const container = document.getElementById("messages");
           container.innerHTML = "";
+
           data.reverse().forEach(entry => {
+            const avatar = `https://api.dicebear.com/6.x/thumbs/svg?seed=${encodeURIComponent(entry.name)}`;
             const div = document.createElement("div");
             div.classList.add("message");
             div.innerHTML = `
-              <p><strong>👤 ${entry.name}</strong></p>
-              <p class="time">🕒 ${entry.time}</p>
-              <p>${entry.message}</p>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="${avatar}" alt="avatar" style="width: 48px; height: 48px; border-radius: 50%;">
+                <div>
+                  <strong>👤 ${entry.name}</strong><br>
+                  <span class="time">🕒 ${entry.time}</span>
+                </div>
+              </div>
+              <p class="content" style="margin-top: 10px;">${entry.message}</p>
             `;
             container.appendChild(div);
           });
@@ -159,3 +167,5 @@
   </script>
 </body>
 </html>
+
+   
