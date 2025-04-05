@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>留言板</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
-      padding: 30px;
       max-width: 600px;
-      margin: auto;
+      margin: 30px auto;
     }
     input, textarea {
       width: 100%;
@@ -33,14 +32,12 @@
 </head>
 <body>
   <h1>留言板</h1>
-
-  <input type="text" id="name" placeholder="你的名字">
-  <textarea id="message" placeholder="說點什麼..."></textarea>
+  <input type="text" id="name" placeholder="你的名字"><br>
+  <textarea id="message" placeholder="說點什麼..."></textarea><br>
   <button onclick="submitMessage()">送出留言</button>
 
   <p id="result"></p>
   <hr>
-
   <div id="messages"></div>
 
   <script src="script.js"></script>
