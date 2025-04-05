@@ -2,94 +2,85 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>留言板</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
+      background-color: #f9f9f9;
       padding: 30px;
       max-width: 700px;
       margin: auto;
-      background-color: #f9f9f9;
     }
-
     h1 {
       color: #333;
     }
-
     input, textarea {
       width: 100%;
       padding: 10px;
-      margin-bottom: 12px;
+      margin-top: 10px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      box-sizing: border-box;
+      border-radius: 5px;
+      font-size: 14px;
     }
-
     button {
       padding: 10px 20px;
-      background-color: #4caf50;
+      font-size: 14px;
+      background-color: #4CAF50;
       color: white;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #45a049;
     }
-
-    #result {
-      margin: 12px 0;
-      font-weight: bold;
-    }
-
     .success {
-      color: green;
+      color: #4CAF50;
+      margin-top: 10px;
     }
-
     .error {
-      color: red;
+      color: #e53935;
+      margin-top: 10px;
     }
-
     .message {
-      background-color: white;
+      background-color: #fff;
       border: 1px solid #ddd;
-      padding: 12px 15px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-
     .message p {
-      margin: 0;
+      margin: 5px 0;
     }
-
-    .message strong {
-      color: #333;
-      font-size: 18px;
+    .avatar {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
     }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 15px;
-      }
-
-      input, textarea, button {
-        font-size: 14px;
-      }
-
-      .message {
-        font-size: 14px;
-      }
+    .avatar img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+    .name {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .time {
+      font-size: 12px;
+      color: #888;
+    }
+    .content {
+      white-space: pre-line;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
-  <h1>留言板</h1>
 
+  <h1>留言板</h1>
   <input type="text" id="name" placeholder="你的名字">
   <textarea id="message" placeholder="說點什麼..."></textarea>
   <button onclick="submitMessage()">送出留言</button>
@@ -98,66 +89,14 @@
   <hr>
   <div id="messages"></div>
 
-  <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
-
-    // 發送留言
-    function submitMessage() {
-      const name = document.getElementById("name").value.trim();
-      const message = document.getElementById("message").value.trim();
-
-      if (!message) {
-        document.getElementById("result").innerHTML = "<span class='error'>❌ 請輸入留言內容</span>";
-        return;
-      }
-
-      const formData = new URLSearchParams();
-      formData.append("name", name || "匿名");
-      formData.append("message", message);
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: formData
-      })
-        .then(res => res.text())
-        .then(data => {
-          document.getElementById("result").innerHTML = "<span class='success'>✅ " + data + "</span>";
-          document.getElementById("message").value = "";
-          loadMessages();
-        })
-        .catch(err => {
-          console.error("留言錯誤：", err);
-          document.getElementById("result").innerHTML = "<span class='error'>❌ 發生錯誤</span>";
-        });
-    }
-
-    // 載入留言
-    function loadMessages() {
-      fetch(SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("messages");
-          container.innerHTML = "";
-          data.reverse().forEach(entry => {
-            const div = document.createElement("div");
-            div.classList.add("message");
-            div.innerHTML = `
-              <p>
-                <strong>👤 ${entry.name}</strong><br>
-                <span style="color: gray;">🕒 ${entry.time}</span><br>
-                <span style="white-space: pre-line;">${entry.message}</span>
-              </p>
-            `;
-            container.appendChild(div);
-          });
-        })
-        .catch(err => {
-          console.error("載入留言錯誤：", err);
-          document.getElementById("result").innerHTML = "<span class='error'>❌ 無法載入留言</span>";
-        });
-    }
-
-    window.onload = loadMessages;
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
+     
+
+ 
+ 
+     
+     
+          
