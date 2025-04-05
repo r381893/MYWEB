@@ -1,42 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>留言板</title>
-  <style>
-    body {
-      font-family: "Microsoft JhengHei", sans-serif;
-      padding: 30px;
-      max-width: 600px;
-      margin: auto;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 6px 12px;
-    }
-    .message {
-      border-bottom: 1px solid #ccc;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-    }
-    .error {
-      color: red;
-    }
-    .success {
-      color: green;
-    }
-  </style>
 </head>
 <body>
   <h1>留言板</h1>
-  <input type="text" id="name" placeholder="你的名字">
-  <textarea id="message" placeholder="說點什麼..."></textarea>
+  <input type="text" id="name" placeholder="你的名字"><br>
+  <textarea id="message" placeholder="說點什麼..."></textarea><br>
   <button onclick="submitMessage()">送出留言</button>
-
   <p id="result"></p>
   <hr>
   <div id="messages"></div>
