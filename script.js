@@ -1,11 +1,17 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsL5tyeeoyvbuYLMb3xGPyGMgOTpqjuktHESDNLQISvGxo1dq1yppRtrhtljcYoWS4/exec';
 
+// 發送留言
 function submitMessage() {
-  const name = document.getElementById("name").value;
-  const message = document.getElementById("message").value;
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  if (!message) {
+    document.getElementById("result").innerHTML = "<span class='error'>❌ 請輸入留言內容</span>";
+    return;
+  }
 
   const formData = new URLSearchParams();
-  formData.append("name", name);
+  formData.append("name", name || "匿名");
   formData.append("message", message);
 
   fetch(SCRIPT_URL, {
@@ -14,15 +20,17 @@ function submitMessage() {
   })
     .then(res => res.text())
     .then(data => {
-      document.getElementById("result").innerText = "✅ " + data;
-      loadMessages(); // 留言成功後重新載入
+      document.getElementById("result").innerHTML = "<span class='success'>✅ " + data + "</span>";
+      document.getElementById("message").value = ""; // 清空輸入框
+      loadMessages(); // 重新載入留言
     })
     .catch(err => {
-      console.error("送出留言錯誤：", err);
-      document.getElementById("result").innerText = "❌ 發生錯誤";
+      console.error("留言錯誤：", err);
+      document.getElementById("result").innerHTML = "<span class='error'>❌ 發生錯誤</span>";
     });
 }
 
+// 載入留言
 function loadMessages() {
   fetch(SCRIPT_URL)
     .then(res => res.json())
@@ -31,19 +39,20 @@ function loadMessages() {
       container.innerHTML = "";
       data.reverse().forEach(entry => {
         const div = document.createElement("div");
+        div.classList.add("message");
         div.innerHTML = `
           <p>
-            🗣️ <strong>${entry.name}</strong><br>
-            🕒 <em>${entry.time}</em><br>
-            💬 ${entry.message}
+            <strong>👤 ${entry.name}</strong>　
+            <span style="color: gray;">🕒 ${entry.time}</span><br>
+            <span style="white-space: pre-line;">${entry.message}</span>
           </p>
-          <hr>`;
+        `;
         container.appendChild(div);
       });
     })
     .catch(err => {
-      console.error("載入留言錯誤：", err);
-      document.getElementById("result").innerHTML = "❌ <span style='color:red;'>無法載入留言</span>";
+      console.error("載入留言時發生錯誤：", err);
+      document.getElementById("result").innerHTML = "<span class='error'>❌ 無法載入留言</span>";
     });
 }
 
