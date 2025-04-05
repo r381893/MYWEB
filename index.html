@@ -25,6 +25,23 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    #emoji-picker {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .emoji-btn {
+      font-size: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin: 0 4px;
+    }
+
+    .emoji-btn:hover {
+      transform: scale(1.2);
+    }
+
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -92,6 +109,17 @@
 <body>
 
   <h1>🧁 可愛留言板 🍩</h1>
+
+  <!-- Emoji 選單 -->
+  <div id="emoji-picker">
+    💬 表情選擇：
+    <button class="emoji-btn">😄</button>
+    <button class="emoji-btn">❤️</button>
+    <button class="emoji-btn">🍩</button>
+    <button class="emoji-btn">🎉</button>
+    <button class="emoji-btn">🔥</button>
+    <button class="emoji-btn">😍</button>
+  </div>
 
   <input type="text" id="name" placeholder="你的名字">
   <textarea id="message" placeholder="輸入你的留言，可加上表情符號 😄❤️🔥"></textarea>
@@ -164,8 +192,18 @@
     }
 
     window.onload = loadMessages;
+
+    // 點 emoji 自動加入到留言框
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".emoji-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const emoji = button.textContent;
+          const textarea = document.getElementById("message");
+          textarea.value += emoji;
+          textarea.focus();
+        });
+      });
+    });
   </script>
 </body>
 </html>
-
-   
