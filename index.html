@@ -18,7 +18,7 @@
       font-size: 2rem;
       text-align: center;
     }
-    input, textarea {
+    select, input, textarea {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
@@ -87,7 +87,16 @@
     🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次
     、已有 <span id="msgCount">0</span> 則留言
   </div>
-  <input type="text" id="name" placeholder="你的名字">
+
+  <!-- 姓名選擇器 -->
+  <label for="nameSelect">留言者：</label>
+  <select id="nameSelect">
+    <option value="JACK">JACK</option>
+    <option value="LUZIA">LUZIA</option>
+    <option value="其他">其他</option>
+  </select>
+
+  <input type="text" id="name" placeholder="請輸入你的名字">
 
   <!-- Emoji 快選列 -->
   <div id="emoji-picker">
@@ -97,7 +106,7 @@
     <button class="emoji-btn">🎉</button>
     <button class="emoji-btn">🔥</button>
     <button class="emoji-btn">🍩</button>
-    <button class="emoji-btn">🫹</button>
+    <button class="emoji-btn">🥹</button>
   </div>
 
   <textarea id="message" placeholder="說點什麼..."></textarea>
@@ -169,6 +178,23 @@
           textarea.focus();
         });
       });
+
+      // 姓名選擇邏輯
+      const nameSelect = document.getElementById("nameSelect");
+      const nameInput = document.getElementById("name");
+      function updateNameField() {
+        const selected = nameSelect.value;
+        if (selected === "其他") {
+          nameInput.value = "";
+          nameInput.disabled = false;
+          nameInput.placeholder = "請輸入你的名字";
+        } else {
+          nameInput.value = selected;
+          nameInput.disabled = true;
+        }
+      }
+      nameSelect.addEventListener("change", updateNameField);
+      updateNameField();
     });
 
     window.onload = loadMessages;
