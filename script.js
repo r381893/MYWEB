@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsL5tyeeoyvbuYLMb3xGPyGMgOTpqjuktHESDNLQISvGxo1dq1yppRtrhtljcYoWS4/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
 
 function submitMessage() {
   const name = document.getElementById("name").value.trim();
