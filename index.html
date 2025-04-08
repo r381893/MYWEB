@@ -1,9 +1,10 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>可愛留言板♥</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>可愛留言板 ❤️</title>
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
@@ -12,121 +13,104 @@
       max-width: 700px;
       margin: auto;
     }
-    h1 {
-      text-align: center;
-    }
-    textarea, input, select {
+    textarea, input {
       width: 100%;
-      padding: 10px;
       margin-top: 10px;
+      padding: 10px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 1rem;
     }
     button {
       margin-top: 10px;
-      padding: 10px 20px;
+      padding: 10px;
+      border: none;
       background: hotpink;
       color: white;
-      border: none;
+      font-weight: bold;
       border-radius: 8px;
-      font-size: 1rem;
       cursor: pointer;
     }
     .message {
-      background: #fff;
-      border-radius: 10px;
+      background: white;
       padding: 1rem;
-      margin-top: 1rem;
+      border-radius: 10px;
       box-shadow: 0 0 5px #ccc;
+      margin-top: 1rem;
     }
     .like-btn {
       background: none;
       border: none;
-      color: hotpink;
       font-size: 1.2rem;
+      color: hotpink;
       cursor: pointer;
-    }
-    @media (max-width: 600px) {
-      body {
-        padding: 1rem;
-      }
     }
   </style>
 </head>
 <body>
   <h1>🍰 可愛留言板 🍩</h1>
-  <div id="ipDisplay">🔍 取得中...</div>
   <textarea id="message" placeholder="說點什麼..."></textarea>
   <input type="text" id="name" placeholder="你的名字">
   <button onclick="submitMessage()">送出留言</button>
   <div id="messages"></div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/script.google.com/macros/s/AKfycbzosLeAvP0NAr5B5DOR-WHyeUbRWyLQteXOfuOJM1AJu6buAr3hHg-52nylEQniiVNx/exec'; // 修改成你部署的網址
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzosLeAvP0NAr5B5DOR-WHyeUbRWyLQteXOfuOJM1AJu6buAr3hHg-52nylEQniiVNx/exec';
     let userIP = '';
 
-    fetch("https://api.ipify.org?format=json")
+    fetch('https://api.ipify.org?format=json')
       .then(res => res.json())
-      .then(data => {
-        userIP = data.ip || '';
-        document.getElementById("ipDisplay").textContent = `🌐 你的 IP：${userIP}`;
-      });
+      .then(data => userIP = data.ip);
 
     function submitMessage() {
-      const name = document.getElementById("name").value.trim() || "匿名";
-      const message = document.getElementById("message").value.trim();
+      const name = document.getElementById('name').value.trim() || '匿名';
+      const message = document.getElementById('message').value.trim();
       if (!message) return;
 
       const formData = new URLSearchParams();
-      formData.append("name", name);
-      formData.append("message", message);
-      formData.append("ip", userIP);
-      formData.append("likes", 0);
+      formData.append('name', name);
+      formData.append('message', message);
+      formData.append('ip', userIP);
+      formData.append('likes', 0);
 
-      fetch(SCRIPT_URL, { method: "POST", body: formData })
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      })
         .then(() => {
-          document.getElementById("message").value = "";
+          document.getElementById('message').value = '';
           loadMessages();
         });
+    }
+
+    function likeMessage(row, btn) {
+      const span = btn.querySelector('span');
+      let count = parseInt(span.textContent) + 1;
+      span.textContent = count;
+
+      fetch(`${SCRIPT_URL}?row=${row}&likes=${count}`, {
+        method: 'PUT'
+      });
     }
 
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
-          const container = document.getElementById("messages");
-          container.innerHTML = "";
+          const container = document.getElementById('messages');
+          container.innerHTML = '';
           data.reverse().forEach(entry => {
-            const div = document.createElement("div");
-            div.className = "message";
+            const div = document.createElement('div');
+            div.className = 'message';
             div.innerHTML = `
               <strong>👤 ${entry.name}</strong><br>
-              🕒 ${entry.time} | 🌐 ${entry.ip}<br>
+              ⏰ ${entry.time} | 🌐 ${entry.ip}<br>
               <p>${entry.message}</p>
-              <button class="like-btn" onclick="likeMessage(${entry.row}, this)">
-                ❤️ <span>${entry.likes || 0}</span>
-              </button>
+              <button class="like-btn" onclick="likeMessage(${entry.row}, this)">❤️ <span>${entry.likes}</span></button>
             `;
             container.appendChild(div);
           });
         });
-    }
-
-    function likeMessage(row, btn) {
-      let span = btn.querySelector("span");
-      let count = parseInt(span.textContent || "0") + 1;
-      span.textContent = count;
-
-      const formData = new URLSearchParams();
-      formData.append("action", "like");
-      formData.append("row", row);
-      formData.append("likes", count);
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: formData
-      });
     }
 
     window.onload = loadMessages;
