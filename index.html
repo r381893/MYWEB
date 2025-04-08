@@ -37,35 +37,34 @@
 </head>
 <body>
   <h1>❤️ 可愛留言板 ❤️</h1>
-  <textarea id="message" placeholder="說點什麼..."></textarea><br>
+  <textarea id="message" placeholder="說點什麼..."></textarea>
   <input type="text" id="name" placeholder="你的名字">
   <button onclick="submitMessage()">送出留言</button>
   <div id="messages"></div>
-
+  
   <script>
-    // ★ STEP 1: 請將此 URL 更新為你部署後的 Apps Script 網址
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec';  
-
-    // 用於記錄使用者 IP
-    let userIP = '';
-
-    // 取得使用者 IP
+    // === 請將下面的 URL 換成你部署 Apps Script 後的網址 ===
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
+    
+    // 取得使用者 IP（選用功能，不影響留言板基本運作）
+    let userIP = "";
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
-      .then(data => userIP = data.ip || '');
-
-    // 送出留言 (POST 請求)
+      .then(data => { userIP = data.ip || ""; })
+      .catch(err => console.error("取得 IP 錯誤:", err));
+    
+    // 送出留言 (POST)
     function submitMessage() {
       const name = document.getElementById("name").value.trim() || "匿名";
       const message = document.getElementById("message").value.trim();
-      if (!message) return;
-
+      if (!message) { return; }
+    
       const formData = new URLSearchParams();
       formData.append("name", name);
       formData.append("message", message);
       formData.append("ip", userIP);
       formData.append("likes", 0);
-
+    
       fetch(SCRIPT_URL, { method: "POST", body: formData })
         .then(res => res.json())
         .then(response => {
@@ -75,21 +74,21 @@
         })
         .catch(err => console.error("送出留言發生錯誤:", err));
     }
-
-    // 讀取所有留言 (GET 請求)
+    
+    // 讀取所有留言 (GET)
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById("messages");
           container.innerHTML = "";
-          // 使用 reverse() 讓最新留言呈現在最上方
+          // 用 reverse() 讓最新留言出現在最前面
           data.reverse().forEach(entry => {
             const div = document.createElement("div");
             div.className = "message";
             div.innerHTML = `
               <strong>👤 ${entry.name}</strong><br>
-              🕒 ${entry.time} | 🌐 ${entry.ip}<br>
+              <span>🕒 ${entry.time} | 🌐 ${entry.ip}</span>
               <p>${entry.message}</p>
               <button class="like-btn" onclick="likeMessage(${entry.row}, this)">
                 ❤️ <span>${entry.likes || 0}</span>
@@ -100,29 +99,27 @@
         })
         .catch(err => console.error("讀取留言發生錯誤:", err));
     }
-
-    // 按愛心按鈕後 (PUT 請求)：先更新畫面，再送出更新請求，成功後重新載入留言列表
+    
+    // 更新愛心數 (PUT)
     function likeMessage(row, btn) {
       const span = btn.querySelector("span");
-      let count = parseInt(span.textContent || "0") + 1;
-      span.textContent = count; // 先即時更新畫面
-
-      fetch(`${SCRIPT_URL}?row=${row}&likes=${count}`, {
-        method: "PUT"
-      })
-      .then(res => res.text())
-      .then(responseText => {
-        console.log("PUT 回應:", responseText);
-        // 重新抓取留言，確保所有資料都是最新
-        loadMessages();
-      })
-      .catch(err => {
-        console.error("更新愛心數發生錯誤:", err);
-        alert("抱歉，愛心更新失敗，請稍後再試！");
-      });
+      let count = parseInt(span.textContent || "0", 10) + 1;
+      span.textContent = count; // 先在畫面上即時更新
+    
+      fetch(`${SCRIPT_URL}?row=${row}&likes=${count}`, { method: "PUT" })
+        .then(res => res.text())
+        .then(responseText => {
+          console.log("PUT 回應:", responseText);
+          // 重新載入留言列表，確保畫面資料為最新
+          loadMessages();
+        })
+        .catch(err => {
+          console.error("更新愛心數發生錯誤:", err);
+          alert("更新愛心失敗，請稍後再試！");
+        });
     }
-
-    // 頁面載入後自動讀取留言
+    
+    // 頁面載入後讀取留言
     window.onload = loadMessages;
   </script>
 </body>
