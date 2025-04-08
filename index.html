@@ -1,8 +1,10 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <title>可愛留言板</title>
+  <meta charset="UTF-8">
+  <title>可愛留言板（支援按讚寫入）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
@@ -24,6 +26,7 @@
       color: hotpink;
       font-size: 1.2rem;
       cursor: pointer;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -35,7 +38,7 @@
   <div id="messages"></div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec'; // << 請改成你的 Script 網址
 
     let userIP = '';
     fetch("https://api.ipify.org?format=json")
@@ -50,6 +53,7 @@
       formData.append("name", name);
       formData.append("message", message);
       formData.append("ip", userIP);
+      formData.append("likes", 0);
       fetch(SCRIPT_URL, { method: "POST", body: formData })
         .then(() => {
           document.getElementById("message").value = "";
@@ -70,7 +74,7 @@
               <strong>👤 ${entry.name}</strong><br>
               🕒 ${entry.time} | 🌐 ${entry.ip}<br>
               <p>${entry.message}</p>
-              <button class="like-btn" onclick="likeMessage('${entry.row}', this)">
+              <button class="like-btn" onclick="likeMessage(${entry.row}, this)">
                 ❤️ <span>${entry.likes || 0}</span>
               </button>
             `;
@@ -80,13 +84,12 @@
     }
 
     function likeMessage(row, btn) {
-      let countSpan = btn.querySelector("span");
-      let newCount = parseInt(countSpan.textContent || 0) + 1;
-      countSpan.textContent = newCount;
-      fetch(SCRIPT_URL, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ row: parseInt(row), likes: newCount })
+      let span = btn.querySelector("span");
+      let count = parseInt(span.textContent || "0") + 1;
+      span.textContent = count;
+
+      fetch(SCRIPT_URL + `?row=${row}&likes=${count}`, {
+        method: "PUT"
       });
     }
 
