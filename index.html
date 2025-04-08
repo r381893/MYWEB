@@ -3,165 +3,173 @@
 <head>
   <meta charset="UTF-8" />
   <title>可愛留言板</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
-      padding: 1rem;
-      max-width: 700px;
+      padding: 2rem;
       margin: auto;
-      background: linear-gradient(to right, #fff6f6, #fff9f0);
+      max-width: 700px;
+      transition: background 0.3s, color 0.3s;
     }
-    h1, .counter, .ip-box {
-      text-align: center;
-    }
+    body.light { background: linear-gradient(to right, #fff6f6, #fff9f0); color: #000; }
+    body.dark { background: #2e2e2e; color: #fff; }
+    h1 { text-align: center; }
     input, textarea, select, button {
-      width: 100%;
-      font-size: 1rem;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      width: 100%; margin-top: 10px; padding: 10px; font-size: 1rem; border-radius: 8px;
     }
     button {
-      background-color: hotpink;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
+      background: hotpink; border: none; color: white; font-weight: bold;
     }
     .message {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 5px #ccc;
+      background: #fff; border-radius: 12px; margin-top: 1rem; padding: 1rem; box-shadow: 0 0 5px #ccc; color: #000;
     }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    .like-btn {
-      font-size: 1rem;
-      background: none;
-      border: none;
-      color: hotpink;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    body.dark .message { background: #444; color: #fff; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+    .meta { font-size: 0.85rem; color: gray; }
+    .like-btn { border: none; background: none; cursor: pointer; color: hotpink; font-size: 1.2rem; margin-top: 5px; }
+    .emoji-btn { font-size: 20px; margin: 0 4px; border: none; background: none; cursor: pointer; }
+    .counter, .ip-box { text-align: center; font-size: 0.9rem; margin-bottom: 1rem; }
+    @media (max-width: 600px) { body { padding: 1rem; } }
   </style>
 </head>
-<body>
-  <h1>♥ 可愛留言板</h1>
-  <div class="ip-box" id="ipDisplay">🌐 正在取得 IP...</div>
-  <div class="counter">🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次，已有 <span id="msgCount">0</span> 則留言
+<body class="light">
+  <h1>🍰 可愛留言板 🍩</h1>
+  <div class="ip-box" id="ipDisplay">🔍 取得中...</div>
+  <div class="counter">
+    🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次 ，已有 <span id="msgCount">0</span> 則留言
   </div>
-
-  <label>姓名選擇</label>
+  <label for="themeSelect">🎨 主題切換：</label>
+  <select id="themeSelect">
+    <option value="light">甜點風</option>
+    <option value="dark">夜間模式</option>
+  </select>
+  <label for="nameSelect">留言者：</label>
   <select id="nameSelect">
     <option value="JACK">JACK</option>
     <option value="LUZIA">LUZIA</option>
     <option value="其他">其他</option>
   </select>
   <input type="text" id="name" placeholder="請輸入你的名字">
+  <div>💬 表情選擇：
+    <button class="emoji-btn">😀</button>
+    <button class="emoji-btn">❤️</button>
+    <button class="emoji-btn">🎉</button>
+    <button class="emoji-btn">🔥</button>
+    <button class="emoji-btn">🍩</button>
+    <button class="emoji-btn">🥹</button>
+  </div>
   <textarea id="message" placeholder="說點什麼..."></textarea>
   <button onclick="submitMessage()">送出留言</button>
-  <p id="result"></p>
+  <p class="result" id="result"></p>
   <div id="messages"></div>
 
-  <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
-    let userIP = '';
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
+  let userIP = '';
 
-    fetch("https://api.ipify.org?format=json")
+  fetch('https://api.ipify.org?format=json')
+    .then(res => res.json())
+    .then(data => {
+      userIP = data.ip;
+      document.getElementById("ipDisplay").textContent = `🌐 你的 IP 位址是：${userIP}`;
+    });
+
+  let viewCount = localStorage.getItem("viewCount") || 0;
+  viewCount++;
+  localStorage.setItem("viewCount", viewCount);
+  document.getElementById("viewCount").textContent = viewCount;
+
+  function submitMessage() {
+    const name = document.getElementById("name").value.trim() || "匿名";
+    const message = document.getElementById("message").value.trim();
+    if (!message) return;
+
+    const formData = new URLSearchParams();
+    formData.append("name", name);
+    formData.append("message", message);
+    formData.append("ip", userIP);
+
+    fetch(SCRIPT_URL, { method: "POST", body: formData })
+      .then(res => res.text())
+      .then(() => {
+        document.getElementById("result").textContent = "✅ 留言成功";
+        document.getElementById("message").value = "";
+        loadMessages();
+      })
+      .catch(() => {
+        document.getElementById("result").textContent = "❌ 發生錯誤";
+      });
+  }
+
+  function loadMessages() {
+    fetch(SCRIPT_URL)
       .then(res => res.json())
       .then(data => {
-        userIP = data.ip;
-        document.getElementById("ipDisplay").textContent = `🌐 你的 IP 是: ${userIP}`;
-      });
-
-    let viewCount = localStorage.getItem("viewCount") || 0;
-    localStorage.setItem("viewCount", ++viewCount);
-    document.getElementById("viewCount").textContent = viewCount;
-
-    function submitMessage() {
-      const name = document.getElementById("name").value.trim() || "匿名";
-      const message = document.getElementById("message").value.trim();
-      if (!message) return;
-
-      const formData = new URLSearchParams();
-      formData.append("name", name);
-      formData.append("message", message);
-      formData.append("ip", userIP);
-
-      fetch(SCRIPT_URL, { method: "POST", body: formData })
-        .then(res => res.text())
-        .then(() => {
-          document.getElementById("result").textContent = "✅ 留言成功";
-          document.getElementById("message").value = "";
-          loadMessages();
-        });
-    }
-
-    function likeMessage(key, btn, name, time) {
-      let current = parseInt(localStorage.getItem(key)) || 0;
-      localStorage.setItem(key, ++current);
-      btn.querySelector("span").textContent = current;
-
-      const formData = new URLSearchParams();
-      formData.append("action", "like");
-      formData.append("name", name);
-      formData.append("time", time);
-
-      fetch(SCRIPT_URL, { method: "POST", body: formData });
-    }
-
-    function loadMessages() {
-      fetch(SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("messages");
-          document.getElementById("msgCount").textContent = data.length;
-          container.innerHTML = "";
-          data.reverse().forEach((entry, i) => {
-            const id = `${entry.name}-${entry.time}`;
-            const likeKey = `like-${id}`;
-            const likes = localStorage.getItem(likeKey) || 0;
-            const div = document.createElement("div");
-            div.className = "message";
-            const avatarSeed = entry.name + i;
-            div.innerHTML = `
-              <div style="display:flex;align-items:center;">
-                <img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(avatarSeed)}">
-                <div>
-                  <strong>👤 ${entry.name}</strong><br>
-                  🕒 ${entry.time} | 🌐 ${entry.ip}
-                </div>
+        const container = document.getElementById("messages");
+        document.getElementById("msgCount").textContent = data.length;
+        container.innerHTML = "";
+        data.reverse().forEach((entry, index) => {
+          const id = `${entry.name}-${entry.time}`;
+          const likeKey = `like-${id}`;
+          const likes = localStorage.getItem(likeKey) || 0;
+          const div = document.createElement("div");
+          div.className = "message";
+          const avatarSeed = entry.name + index;
+          div.innerHTML = `
+            <div style="display:flex;align-items:center;">
+              <img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(avatarSeed)}" alt="avatar">
+              <div>
+                <strong>🕵️ ${entry.name}</strong><br>
+                <span class="meta">🕒 ${entry.time}｜📍${entry.ip || ''}</span>
               </div>
-              <div style="margin-top:10px; white-space:pre-line;">${entry.message}</div>
-              <button class="like-btn" onclick="likeMessage('${likeKey}', this, '${entry.name}', '${entry.time}')">❤️ <span>${likes}</span></button>
-            `;
-            container.appendChild(div);
-          });
+            </div>
+            <div style="margin-top:10px; white-space:pre-line;">${entry.message}</div>
+            <button class="like-btn" onclick="likeMessage('${likeKey}', this)">❤️ <span>${likes}</span></button>
+          `;
+          container.appendChild(div);
         });
-    }
+      });
+  }
+
+  function likeMessage(key, btn) {
+    let current = parseInt(localStorage.getItem(key)) || 0;
+    current++;
+    localStorage.setItem(key, current);
+    btn.querySelector("span").textContent = current;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".emoji-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const textarea = document.getElementById("message");
+        textarea.value += button.textContent;
+        textarea.focus();
+      });
+    });
 
     document.getElementById("nameSelect").addEventListener("change", () => {
-      const sel = document.getElementById("nameSelect").value;
-      const input = document.getElementById("name");
-      if (sel === "其他") {
-        input.disabled = false;
-        input.value = "";
+      const selected = nameSelect.value;
+      const nameInput = document.getElementById("name");
+      if (selected === "其他") {
+        nameInput.value = "";
+        nameInput.disabled = false;
       } else {
-        input.disabled = true;
-        input.value = sel;
+        nameInput.value = selected;
+        nameInput.disabled = true;
       }
     });
     document.getElementById("nameSelect").dispatchEvent(new Event("change"));
 
-    window.onload = loadMessages;
-  </script>
+    document.getElementById("themeSelect").addEventListener("change", (e) => {
+      document.body.className = e.target.value;
+    });
+  });
+
+  window.onload = loadMessages;
+</script>
 </body>
 </html>
