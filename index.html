@@ -116,6 +116,7 @@
           const id = `${entry.name}-${entry.time}`;
           const likeKey = `like-${id}`;
           const likes = localStorage.getItem(likeKey) || 0;
+
           const div = document.createElement("div");
           div.className = "message";
           const avatarSeed = entry.name + index;
@@ -128,18 +129,27 @@
               </div>
             </div>
             <div style="margin-top:10px; white-space:pre-line;">${entry.message}</div>
-            <button class="like-btn" onclick="likeMessage('${likeKey}', this)">❤️ <span>${likes}</span></button>
+            <button class="like-btn" onclick="likeMessage('${likeKey}', this, '${entry.name}', '${entry.time}')">❤️ <span>${likes}</span></button>
           `;
           container.appendChild(div);
         });
       });
   }
 
-  function likeMessage(key, btn) {
+  function likeMessage(key, btn, name, time) {
     let current = parseInt(localStorage.getItem(key)) || 0;
     current++;
     localStorage.setItem(key, current);
     btn.querySelector("span").textContent = current;
+
+    const formData = new URLSearchParams();
+    formData.append("action", "like");
+    formData.append("name", name);
+    formData.append("time", time);
+
+    fetch(SCRIPT_URL, { method: "POST", body: formData })
+      .then(res => res.text())
+      .then(console.log);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
