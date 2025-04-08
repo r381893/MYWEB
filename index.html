@@ -63,8 +63,9 @@
   <div id="messages"></div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzosLeAvP0NAr5B5DOR-WHyeUbRWyLQteXOfuOJM1AJu6buAr3hHg-52nylEQniiVNx/exec'; // 修改成你部署的網址
+    const SCRIPT_URL = 'https://script.google.com/macros/s/script.google.com/macros/s/AKfycbzosLeAvP0NAr5B5DOR-WHyeUbRWyLQteXOfuOJM1AJu6buAr3hHg-52nylEQniiVNx/exec'; // 修改成你部署的網址
     let userIP = '';
+
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
       .then(data => {
