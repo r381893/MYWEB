@@ -2,205 +2,164 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>可愛留言板</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
-      background: linear-gradient(to right, #fff6f6, #fff9f0);
       padding: 1rem;
+      max-width: 700px;
       margin: auto;
-      max-width: 720px;
-      box-sizing: border-box;
+      background: linear-gradient(to right, #fff6f6, #fff9f0);
     }
-    h1 {
+    h1, .counter, .ip-box {
       text-align: center;
-      font-size: 1.8rem;
     }
-    select, input, textarea, button {
+    input, textarea, select, button {
       width: 100%;
       font-size: 1rem;
-      padding: 0.8rem;
-      margin-top: 0.5rem;
-      border-radius: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
     }
     button {
       background-color: hotpink;
       color: white;
       font-weight: bold;
       border: none;
-    }
-    .counter, .ip-box {
-      text-align: center;
-      font-size: 0.9rem;
-      margin: 0.5rem 0;
-    }
-    #emoji-picker {
-      text-align: center;
-      margin: 0.5rem 0;
-    }
-    .emoji-btn {
-      font-size: 1.5rem;
-      background: none;
-      border: none;
-      margin: 0 0.2rem;
       cursor: pointer;
     }
     .message {
-      background-color: white;
+      background: #fff;
+      border-radius: 12px;
       padding: 1rem;
       margin-top: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    .message .meta {
-      font-size: 0.8rem;
-      color: #666;
-    }
-    .like-btn {
-      border: none;
-      background: none;
-      color: hotpink;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
+      box-shadow: 0 0 5px #ccc;
     }
     .avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      margin-right: 0.5rem;
+      margin-right: 10px;
     }
-    @media (max-width: 480px) {
-      h1 { font-size: 1.5rem; }
-      .emoji-btn { font-size: 1.2rem; }
+    .like-btn {
+      font-size: 1rem;
+      background: none;
+      border: none;
+      color: hotpink;
+      cursor: pointer;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>🍰 可愛留言板 🍩</h1>
-  <div class="ip-box" id="ipDisplay">🔍 取得中...</div>
-  <div class="counter">
-    👀 此頁瀏覽 <span id="viewCount">0</span> 次，留言 <span id="msgCount">0</span> 則
+  <h1>♥ 可愛留言板</h1>
+  <div class="ip-box" id="ipDisplay">🌐 正在取得 IP...</div>
+  <div class="counter">🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次，已有 <span id="msgCount">0</span> 則留言
   </div>
 
-  <label for="nameSelect">留言者：</label>
+  <label>姓名選擇</label>
   <select id="nameSelect">
     <option value="JACK">JACK</option>
     <option value="LUZIA">LUZIA</option>
     <option value="其他">其他</option>
   </select>
   <input type="text" id="name" placeholder="請輸入你的名字">
-
-  <div id="emoji-picker">
-    😊 表情：
-    <button class="emoji-btn">😀</button>
-    <button class="emoji-btn">❤️</button>
-    <button class="emoji-btn">🎉</button>
-    <button class="emoji-btn">🍩</button>
-    <button class="emoji-btn">🥹</button>
-  </div>
-
-  <textarea id="message" rows="3" placeholder="寫點什麼吧..."></textarea>
+  <textarea id="message" placeholder="說點什麼..."></textarea>
   <button onclick="submitMessage()">送出留言</button>
   <p id="result"></p>
-
   <div id="messages"></div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
-    let userIP = "";
+    let userIP = '';
 
-    // 抓 IP
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
       .then(data => {
         userIP = data.ip;
-        document.getElementById("ipDisplay").textContent = `🌐 你的 IP 是：${userIP}`;
+        document.getElementById("ipDisplay").textContent = `🌐 你的 IP 是: ${userIP}`;
       });
 
-    // 表情加入輸入框
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".emoji-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          document.getElementById("message").value += btn.textContent;
-        });
-      });
-      document.getElementById("nameSelect").addEventListener("change", e => {
-        const val = e.target.value;
-        const nameInput = document.getElementById("name");
-        nameInput.disabled = val !== "其他";
-        nameInput.value = val === "其他" ? "" : val;
-      });
-    });
+    let viewCount = localStorage.getItem("viewCount") || 0;
+    localStorage.setItem("viewCount", ++viewCount);
+    document.getElementById("viewCount").textContent = viewCount;
 
-    // 留言送出
     function submitMessage() {
       const name = document.getElementById("name").value.trim() || "匿名";
-      const msg = document.getElementById("message").value.trim();
-      if (!msg) return;
+      const message = document.getElementById("message").value.trim();
+      if (!message) return;
 
       const formData = new URLSearchParams();
       formData.append("name", name);
-      formData.append("message", msg);
+      formData.append("message", message);
       formData.append("ip", userIP);
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(() => {
-        document.getElementById("result").textContent = "✅ 留言成功";
-        document.getElementById("message").value = "";
-        loadMessages();
-      });
+      fetch(SCRIPT_URL, { method: "POST", body: formData })
+        .then(res => res.text())
+        .then(() => {
+          document.getElementById("result").textContent = "✅ 留言成功";
+          document.getElementById("message").value = "";
+          loadMessages();
+        });
     }
 
-    // 載入留言
+    function likeMessage(key, btn, name, time) {
+      let current = parseInt(localStorage.getItem(key)) || 0;
+      localStorage.setItem(key, ++current);
+      btn.querySelector("span").textContent = current;
+
+      const formData = new URLSearchParams();
+      formData.append("action", "like");
+      formData.append("name", name);
+      formData.append("time", time);
+
+      fetch(SCRIPT_URL, { method: "POST", body: formData });
+    }
+
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
-          const box = document.getElementById("messages");
-          box.innerHTML = "";
+          const container = document.getElementById("messages");
           document.getElementById("msgCount").textContent = data.length;
-          data.reverse().forEach((entry, index) => {
+          container.innerHTML = "";
+          data.reverse().forEach((entry, i) => {
             const id = `${entry.name}-${entry.time}`;
             const likeKey = `like-${id}`;
             const likes = localStorage.getItem(likeKey) || 0;
             const div = document.createElement("div");
             div.className = "message";
+            const avatarSeed = entry.name + i;
             div.innerHTML = `
               <div style="display:flex;align-items:center;">
-                <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=${entry.name}${index}" class="avatar">
+                <img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(avatarSeed)}">
                 <div>
-                  <strong>${entry.name}</strong><br>
-                  <span class="meta">🕒 ${entry.time}</span>
+                  <strong>👤 ${entry.name}</strong><br>
+                  🕒 ${entry.time} | 🌐 ${entry.ip}
                 </div>
               </div>
-              <div style="margin-top:8px; white-space:pre-line;">${entry.message}</div>
-              <button class="like-btn" onclick="likeMessage('${likeKey}', this)">❤️ <span>${likes}</span></button>
+              <div style="margin-top:10px; white-space:pre-line;">${entry.message}</div>
+              <button class="like-btn" onclick="likeMessage('${likeKey}', this, '${entry.name}', '${entry.time}')">❤️ <span>${likes}</span></button>
             `;
-            box.appendChild(div);
+            container.appendChild(div);
           });
         });
     }
 
-    function likeMessage(key, btn) {
-      let count = parseInt(localStorage.getItem(key)) || 0;
-      count++;
-      localStorage.setItem(key, count);
-      btn.querySelector("span").textContent = count;
-    }
-
-    let viewCount = localStorage.getItem("viewCount") || 0;
-    viewCount++;
-    localStorage.setItem("viewCount", viewCount);
-    document.getElementById("viewCount").textContent = viewCount;
+    document.getElementById("nameSelect").addEventListener("change", () => {
+      const sel = document.getElementById("nameSelect").value;
+      const input = document.getElementById("name");
+      if (sel === "其他") {
+        input.disabled = false;
+        input.value = "";
+      } else {
+        input.disabled = true;
+        input.value = sel;
+      }
+    });
+    document.getElementById("nameSelect").dispatchEvent(new Event("change"));
 
     window.onload = loadMessages;
   </script>
