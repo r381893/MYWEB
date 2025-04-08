@@ -1,153 +1,164 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>可愛留言板</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
-      background: linear-gradient(to right, #fff6f6, #fff9f0);
-      padding: 2rem;
-      max-width: 700px;
-      margin: auto;
+      transition: background 0.3s, color 0.3s;
     }
-    h1 {
-      font-size: 2rem;
-      text-align: center;
-    }
+    body.light { background: #fff6f6; color: #000; }
+    body.dark { background: #2e2e2e; color: #eee; }
+    h1 { text-align: center; }
     select, input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      font-size: 1rem;
+      width: 100%; padding: 10px; margin-top: 10px; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 8px;
     }
     button {
-      background-color: hotpink;
-      border: none;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+      background-color: hotpink; color: white; font-weight: bold; cursor: pointer;
     }
     .message {
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 5px #ccc;
+      background: white; padding: 1rem; margin-top: 1rem; border-radius: 10px; box-shadow: 0 0 5px #ccc; color: #000;
     }
-    .meta {
-      font-size: 0.8rem;
-      color: gray;
-    }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    .like-btn {
-      background: none;
-      border: none;
-      color: hotpink;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0;
-    }
+    body.dark .message { background: #444; color: #fff; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+    .meta { font-size: 0.85rem; color: gray; }
+    .like-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: hotpink; }
+    .emoji-btn { background: none; border: none; cursor: pointer; font-size: 20px; margin: 0 4px; }
+    .ip-box, .counter { text-align: center; margin-top: 10px; font-size: 0.9rem; }
   </style>
 </head>
-<body>
+<body class="light">
   <h1>🍰 可愛留言板 🍩</h1>
-
+  <div class="ip-box" id="ipDisplay">🔍 取得中...</div>
+  <div class="counter">
+    🔍 此頁已被瀏覽 <span id="viewCount">0</span> 次 、已有 <span id="msgCount">0</span> 則留言
+  </div>
+  <label for="themeSelect">主題切換：</label>
+  <select id="themeSelect">
+    <option value="light">甜點風</option>
+    <option value="dark">夜間模式</option>
+  </select>
   <label for="nameSelect">留言者：</label>
   <select id="nameSelect">
     <option value="JACK">JACK</option>
     <option value="LUZIA">LUZIA</option>
-    <option value="other">其他</option>
+    <option value="其他">其他</option>
   </select>
-  <input type="text" id="name" placeholder="請輸入姓名">
-
-  <div>
-    表情：
-    <button onclick="insertEmoji('😀')">😀</button>
-    <button onclick="insertEmoji('❤️')">❤️</button>
-    <button onclick="insertEmoji('🎉')">🎉</button>
+  <input type="text" id="name" placeholder="請輸入你的名字">
+  <div id="emoji-picker">
+    💬 表情選擇：
+    <button class="emoji-btn">😀</button>
+    <button class="emoji-btn">❤️</button>
+    <button class="emoji-btn">🎉</button>
+    <button class="emoji-btn">🔥</button>
+    <button class="emoji-btn">🍩</button>
+    <button class="emoji-btn">🥹</button>
   </div>
-
   <textarea id="message" placeholder="說點什麼..."></textarea>
   <button onclick="submitMessage()">送出留言</button>
-  <p id="result"></p>
+  <p class="result" id="result"></p>
   <div id="messages"></div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
-    function insertEmoji(emoji) {
-      document.getElementById('message').value += emoji;
-    }
+ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7/exec';
+    
+    let userIP = '';
+
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => {
+        userIP = data.ip;
+        document.getElementById("ipDisplay").textContent = `🌐 你的 IP 位址是：${userIP}`;
+      });
+
+    let viewCount = localStorage.getItem("viewCount") || 0;
+    viewCount++;
+    localStorage.setItem("viewCount", viewCount);
+    document.getElementById("viewCount").textContent = viewCount;
+
     function submitMessage() {
       const name = document.getElementById("name").value.trim() || "匿名";
       const message = document.getElementById("message").value.trim();
       if (!message) return;
+
       const formData = new URLSearchParams();
       formData.append("name", name);
       formData.append("message", message);
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(() => {
-        document.getElementById("result").textContent = "✅ 留言成功";
-        document.getElementById("message").value = "";
-        loadMessages();
-      });
+      formData.append("ip", userIP);
+
+      fetch(SCRIPT_URL, { method: "POST", body: formData })
+        .then(res => res.text())
+        .then(() => {
+          document.getElementById("result").textContent = "✅ 留言成功";
+          document.getElementById("message").value = "";
+          loadMessages();
+        });
     }
+
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById("messages");
+          document.getElementById("msgCount").textContent = data.length;
           container.innerHTML = "";
           data.reverse().forEach((entry, index) => {
+            const id = `${entry.name}-${entry.time}`;
+            const likeKey = `like-${id}`;
+            const likes = localStorage.getItem(likeKey) || 0;
+
             const div = document.createElement("div");
             div.className = "message";
             div.innerHTML = `
-              <div style="display:flex;align-items:center">
-                <img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${entry.name + index}" />
-                <strong>${entry.name}</strong>
+              <div style="display:flex;align-items:center;">
+                <img class="avatar" src="https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(entry.name + index)}" />
+                <div>
+                  <strong>🕵️ ${entry.name}</strong><br>
+                  <span class="meta">🕒 ${entry.time} | 🧭 ${entry.ip || ''}</span>
+                </div>
               </div>
-              <div class="meta">時間：${entry.time} | IP: ${entry.ip}</div>
-              <div style="margin-top:0.5rem; white-space:pre-line">${entry.message}</div>
-              <button class="like-btn" onclick="likeMessage('${entry.row}')">❤️ <span id="like-${entry.row}">${entry.likes || 0}</span></button>
+              <div style="margin-top:10px; white-space:pre-line;">${entry.message}</div>
+              <button class="like-btn" onclick="likeMessage('${likeKey}', this)">❤️ <span>${likes}</span></button>
             `;
             container.appendChild(div);
           });
         });
     }
-    function likeMessage(row) {
-      const current = parseInt(document.getElementById("like-" + row).textContent) || 0;
-      document.getElementById("like-" + row).textContent = current + 1;
-      fetch(SCRIPT_URL + `?likeRow=${row}`);
+
+    function likeMessage(key, btn) {
+      let current = parseInt(localStorage.getItem(key)) || 0;
+      current++;
+      localStorage.setItem(key, current);
+      btn.querySelector("span").textContent = current;
     }
-    document.getElementById("nameSelect").addEventListener("change", () => {
-      const val = document.getElementById("nameSelect").value;
-      const input = document.getElementById("name");
-      if (val === "other") {
-        input.disabled = false;
-        input.value = "";
-      } else {
-        input.disabled = true;
-        input.value = val;
-      }
-    });
-    window.onload = () => {
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".emoji-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const textarea = document.getElementById("message");
+          textarea.value += btn.textContent;
+          textarea.focus();
+        });
+      });
+      document.getElementById("nameSelect").addEventListener("change", () => {
+        const selected = nameSelect.value;
+        const nameInput = document.getElementById("name");
+        if (selected === "其他") {
+          nameInput.value = "";
+          nameInput.disabled = false;
+        } else {
+          nameInput.value = selected;
+          nameInput.disabled = true;
+        }
+      });
+      document.getElementById("themeSelect").addEventListener("change", e => {
+        document.body.className = e.target.value;
+      });
       loadMessages();
-      document.getElementById("nameSelect").dispatchEvent(new Event("change"));
-    }
+    });
   </script>
 </body>
 </html>
