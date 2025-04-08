@@ -20,7 +20,7 @@
       color: #d6336c;
       margin-bottom: 1rem;
     }
-    /* 留言板容器 */
+    /* 留言板外框 */
     #board {
       width: 100%;
       max-width: 800px;
@@ -29,22 +29,58 @@
       border-radius: 10px;
       overflow: hidden;
     }
-    /* 留言表單 */
+    /* 表單區塊 */
     #form-section {
       background: #ffcfe0;
       padding: 1rem;
       border-bottom: 1px solid #f7c2cf;
     }
-    #form-section textarea,
-    #form-section input[type="text"] {
+    #form-section textarea {
       width: 100%;
       padding: 0.8rem;
       border: 1px solid #f7c2cf;
       border-radius: 5px;
       margin: 0.5rem 0;
       font-size: 1rem;
+      resize: vertical;
     }
-    #form-section button {
+    /* 發言者選擇區 */
+    #name-choice {
+      margin: 0.5rem 0;
+    }
+    #name-choice label {
+      margin-right: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #name-choice input[type="radio"] {
+      margin-right: 0.3rem;
+    }
+    #customName {
+      padding: 0.5rem;
+      border: 1px solid #f7c2cf;
+      border-radius: 5px;
+      margin-top: 0.5rem;
+      display: none;
+      width: calc(100% - 1rem);
+    }
+    /* 貼圖區 */
+    #sticker-panel {
+      margin: 0.5rem 0;
+    }
+    #sticker-panel button {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-right: 0.3rem;
+    }
+    #sticker-panel button:hover {
+      transform: scale(1.2);
+    }
+    /* 送出留言按鈕 */
+    #form-section button.submit-btn {
       background: #d6336c;
       color: white;
       border: none;
@@ -54,10 +90,10 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    #form-section button:hover {
+    #form-section button.submit-btn:hover {
       background: #b22a58;
     }
-    /* 留言區塊 */
+    /* 留言顯示區 */
     #messages {
       padding: 1rem;
       max-height: 600px;
@@ -69,10 +105,7 @@
       padding: 1rem;
       margin-bottom: 1rem;
       border: 1px solid #f0f0f0;
-      transition: transform 0.2s;
-    }
-    .message:hover {
-      transform: scale(1.02);
+      animation: fadeIn 0.5s ease-in;
     }
     .message > strong {
       font-size: 1.2rem;
@@ -87,7 +120,7 @@
       margin: 0.8rem 0;
       font-size: 1rem;
     }
-    /* 愛心按鈕 */
+    /* 愛心按鈕（僅在前端更新數值） */
     .like-btn {
       background: none;
       border: none;
@@ -106,6 +139,11 @@
       font-size: 1rem;
       color: #555;
     }
+    /* 簡單的淡入動畫 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -113,36 +151,91 @@
     <div id="form-section">
       <h1>❤️ 可愛留言板 ❤️</h1>
       <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
-      <input type="text" id="name" placeholder="你的名字">
-      <button onclick="submitMessage()">送出留言</button>
+      
+      <!-- 發言者選項 -->
+      <div id="name-choice">
+        <label>
+          <input type="radio" name="username" value="JACK"> JACK
+        </label>
+        <label>
+          <input type="radio" name="username" value="LUZIA"> LUZIA
+        </label>
+        <label>
+          <input type="radio" name="username" value="other"> 其他
+        </label>
+        <input type="text" id="customName" placeholder="請輸入你的名字">
+      </div>
+      
+      <!-- 貼圖功能 -->
+      <div id="sticker-panel">
+        <button type="button" onclick="addSticker('😀')">😀</button>
+        <button type="button" onclick="addSticker('😍')">😍</button>
+        <button type="button" onclick="addSticker('😎')">😎</button>
+        <button type="button" onclick="addSticker('🤔')">🤔</button>
+        <button type="button" onclick="addSticker('😂')">😂</button>
+      </div>
+      
+      <!-- 送出留言按鈕 -->
+      <button class="submit-btn" onclick="submitMessage()">送出留言</button>
     </div>
     <div id="messages"></div>
   </div>
 
   <script>
-    // STEP 1: 將此 URL 更新為你部署後的 Apps Script 網址（只用於 GET 與 POST）
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";  
-
-    // 用來記錄使用者 IP（可選，不影響留言板運作）
+    // ★ 請將此 URL 更新為你部署後的 Google Apps Script 網址（用於 GET 與 POST）
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
+    
+    // 取得使用者 IP（可選功能）
     let userIP = "";
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
       .then(data => { userIP = data.ip || ""; })
       .catch(err => console.error("取得 IP 錯誤:", err));
     
-    // 送出留言 (使用 POST)
+    // 依照選擇控制「其他」輸入框顯示
+    document.querySelectorAll('input[name="username"]').forEach(radio => {
+      radio.addEventListener('change', function(){
+        document.getElementById("customName").style.display = (this.value === "other") ? "block" : "none";
+      });
+    });
+    
+    // 貼圖功能：將選定的貼圖加到留言內容中
+    function addSticker(sticker) {
+      const messageTextArea = document.getElementById("message");
+      messageTextArea.value += " " + sticker;
+      // 可加上額外動畫效果，例如短暫改變背景色或震動效果
+      messageTextArea.style.transition = "background-color 0.3s";
+      messageTextArea.style.backgroundColor = "#fffded";
+      setTimeout(() => {
+        messageTextArea.style.backgroundColor = "";
+      }, 300);
+    }
+    
+    // 送出留言 (POST 請求)
     function submitMessage() {
-      const name = document.getElementById("name").value.trim() || "匿名";
+      // 取得發言者名稱
+      let name;
+      const selected = document.querySelector('input[name="username"]:checked');
+      if (selected) {
+        if (selected.value === "other") {
+          name = document.getElementById("customName").value.trim() || "匿名";
+        } else {
+          name = selected.value;
+        }
+      } else {
+        name = "匿名";
+      }
+      
       const message = document.getElementById("message").value.trim();
       if (!message) return;
-
+      
       const formData = new URLSearchParams();
       formData.append("name", name);
       formData.append("message", message);
       formData.append("ip", userIP);
-      // 此處將初始愛心數寫入 0，但之後的 like 更新僅在頁面更新
+      // 初始愛心數存入 0（之後僅在前端更新）
       formData.append("likes", 0);
-
+      
       fetch(SCRIPT_URL, { method: "POST", body: formData })
         .then(res => res.json())
         .then(response => {
@@ -153,17 +246,15 @@
         .catch(err => console.error("送出留言發生錯誤:", err));
     }
     
-    // 讀取所有留言 (使用 GET)
+    // 讀取所有留言 (GET 請求)
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById("messages");
           container.innerHTML = "";
-          // 用 reverse() 讓最新留言出現在最上面
+          // 使用 reverse() 讓最新留言在最前面
           data.reverse().forEach(entry => {
-            // 在呈現留言時，因為我們放棄愛心後端更新，
-            // 所以使用 entry.likes 作為初始值，但後續更新僅在畫面上有效
             const div = document.createElement("div");
             div.className = "message";
             div.innerHTML = `
@@ -180,15 +271,14 @@
         .catch(err => console.error("讀取留言發生錯誤:", err));
     }
     
-    // 更新愛心數 (僅更新頁面，不送出 PUT 請求)
+    // 愛心更新（僅於頁面更新數字，不送出到後端）
     function likeMessage(btn) {
       const span = btn.querySelector("span");
       let count = parseInt(span.textContent || "0", 10) + 1;
       span.textContent = count;
-      // 若有需要，可額外加上動畫效果或提醒訊息，此處僅更新 DOM
     }
     
-    // 頁面載入後讀取留言
+    // 頁面載入後自動讀取留言
     window.onload = loadMessages;
   </script>
 </body>
