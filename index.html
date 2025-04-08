@@ -64,7 +64,7 @@
       display: none;
       width: calc(100% - 1rem);
     }
-    /* 貼圖區 */
+    /* 貼圖功能 */
     #sticker-panel {
       margin: 0.5rem 0;
     }
@@ -120,7 +120,7 @@
       margin: 0.8rem 0;
       font-size: 1rem;
     }
-    /* 愛心按鈕（僅在前端更新數值） */
+    /* 愛心按鈕（僅在前端更新數字） */
     .like-btn {
       background: none;
       border: none;
@@ -182,7 +182,7 @@
   </div>
 
   <script>
-    // ★ 請將此 URL 更新為你部署後的 Google Apps Script 網址（用於 GET 與 POST）
+    // ★ 請將下列 URL 更新為你部署後的 Google Apps Script 網址（用於 GET 與 POST）
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
     
     // 取得使用者 IP（可選功能）
@@ -192,7 +192,7 @@
       .then(data => { userIP = data.ip || ""; })
       .catch(err => console.error("取得 IP 錯誤:", err));
     
-    // 依照選擇控制「其他」輸入框顯示
+    // 控制「其他」選項顯示自訂姓名輸入框
     document.querySelectorAll('input[name="username"]').forEach(radio => {
       radio.addEventListener('change', function(){
         document.getElementById("customName").style.display = (this.value === "other") ? "block" : "none";
@@ -203,7 +203,7 @@
     function addSticker(sticker) {
       const messageTextArea = document.getElementById("message");
       messageTextArea.value += " " + sticker;
-      // 可加上額外動畫效果，例如短暫改變背景色或震動效果
+      // 簡單動畫效果：短暫改變背景色
       messageTextArea.style.transition = "background-color 0.3s";
       messageTextArea.style.backgroundColor = "#fffded";
       setTimeout(() => {
@@ -233,7 +233,7 @@
       formData.append("name", name);
       formData.append("message", message);
       formData.append("ip", userIP);
-      // 初始愛心數存入 0（之後僅在前端更新）
+      // 初始愛心數存入 0（之後僅在頁面上更新，不送出至後端）
       formData.append("likes", 0);
       
       fetch(SCRIPT_URL, { method: "POST", body: formData })
@@ -271,7 +271,7 @@
         .catch(err => console.error("讀取留言發生錯誤:", err));
     }
     
-    // 愛心更新（僅於頁面更新數字，不送出到後端）
+    // 愛心更新：僅於頁面更新數字（不送出到後端）
     function likeMessage(btn) {
       const span = btn.querySelector("span");
       let count = parseInt(span.textContent || "0", 10) + 1;
