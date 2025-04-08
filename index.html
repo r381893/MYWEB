@@ -5,66 +5,144 @@
   <title>可愛留言板 ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* 整體背景與排版 */
     body {
       font-family: 'Noto Sans TC', sans-serif;
-      background: #fffaf5;
+      background: linear-gradient(to right, #fffaf5, #ffe6f0);
+      margin: 0;
       padding: 2rem;
-      max-width: 700px;
-      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #d6336c;
+      margin-bottom: 1rem;
+    }
+    /* 留言板容器 */
+    #board {
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    /* 留言表單 */
+    #form-section {
+      background: #ffcfe0;
+      padding: 1rem;
+      border-bottom: 1px solid #f7c2cf;
+    }
+    #form-section textarea,
+    #form-section input[type="text"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #f7c2cf;
+      border-radius: 5px;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    #form-section button {
+      background: #d6336c;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #form-section button:hover {
+      background: #b22a58;
+    }
+    /* 留言區塊 */
+    #messages {
+      padding: 1rem;
+      max-height: 600px;
+      overflow-y: auto;
     }
     .message {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 1rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 5px #ccc;
+      margin-bottom: 1rem;
+      border: 1px solid #f0f0f0;
+      transition: transform 0.2s;
     }
+    .message:hover {
+      transform: scale(1.02);
+    }
+    .message > strong {
+      font-size: 1.2rem;
+      color: #333;
+    }
+    .message > span {
+      font-size: 0.9rem;
+      color: #888;
+    }
+    .message p {
+      line-height: 1.5;
+      margin: 0.8rem 0;
+      font-size: 1rem;
+    }
+    /* 愛心按鈕 */
     .like-btn {
       background: none;
       border: none;
-      color: hotpink;
-      font-size: 1.2rem;
+      color: #d6336c;
+      font-size: 1.4rem;
       cursor: pointer;
-      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: transform 0.2s;
     }
-    textarea, input[type="text"] {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-      box-sizing: border-box;
+    .like-btn:hover {
+      transform: scale(1.1);
+    }
+    .like-btn span {
+      font-size: 1rem;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>❤️ 可愛留言板 ❤️</h1>
-  <textarea id="message" placeholder="說點什麼..."></textarea>
-  <input type="text" id="name" placeholder="你的名字">
-  <button onclick="submitMessage()">送出留言</button>
-  <div id="messages"></div>
-  
+  <div id="board">
+    <div id="form-section">
+      <h1>❤️ 可愛留言板 ❤️</h1>
+      <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
+      <input type="text" id="name" placeholder="你的名字">
+      <button onclick="submitMessage()">送出留言</button>
+    </div>
+    <div id="messages"></div>
+  </div>
+
   <script>
-    // === 請將下面的 URL 換成你部署 Apps Script 後的網址 ===
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
-    
-    // 取得使用者 IP（選用功能，不影響留言板基本運作）
+    // STEP 1: 將此 URL 更新為你部署後的 Apps Script 網址（只用於 GET 與 POST）
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";  
+
+    // 用來記錄使用者 IP（可選，不影響留言板運作）
     let userIP = "";
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
       .then(data => { userIP = data.ip || ""; })
       .catch(err => console.error("取得 IP 錯誤:", err));
     
-    // 送出留言 (POST)
+    // 送出留言 (使用 POST)
     function submitMessage() {
       const name = document.getElementById("name").value.trim() || "匿名";
       const message = document.getElementById("message").value.trim();
-      if (!message) { return; }
-    
+      if (!message) return;
+
       const formData = new URLSearchParams();
       formData.append("name", name);
       formData.append("message", message);
       formData.append("ip", userIP);
+      // 此處將初始愛心數寫入 0，但之後的 like 更新僅在頁面更新
       formData.append("likes", 0);
-    
+
       fetch(SCRIPT_URL, { method: "POST", body: formData })
         .then(res => res.json())
         .then(response => {
@@ -75,22 +153,24 @@
         .catch(err => console.error("送出留言發生錯誤:", err));
     }
     
-    // 讀取所有留言 (GET)
+    // 讀取所有留言 (使用 GET)
     function loadMessages() {
       fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
           const container = document.getElementById("messages");
           container.innerHTML = "";
-          // 用 reverse() 讓最新留言出現在最前面
+          // 用 reverse() 讓最新留言出現在最上面
           data.reverse().forEach(entry => {
+            // 在呈現留言時，因為我們放棄愛心後端更新，
+            // 所以使用 entry.likes 作為初始值，但後續更新僅在畫面上有效
             const div = document.createElement("div");
             div.className = "message";
             div.innerHTML = `
-              <strong>👤 ${entry.name}</strong><br>
-              <span>🕒 ${entry.time} | 🌐 ${entry.ip}</span>
+              <strong>👤 ${entry.name}</strong>
+              <br><span>🕒 ${entry.time} | 🌐 ${entry.ip}</span>
               <p>${entry.message}</p>
-              <button class="like-btn" onclick="likeMessage(${entry.row}, this)">
+              <button class="like-btn" onclick="likeMessage(this)">
                 ❤️ <span>${entry.likes || 0}</span>
               </button>
             `;
@@ -100,23 +180,12 @@
         .catch(err => console.error("讀取留言發生錯誤:", err));
     }
     
-    // 更新愛心數 (PUT)
-    function likeMessage(row, btn) {
+    // 更新愛心數 (僅更新頁面，不送出 PUT 請求)
+    function likeMessage(btn) {
       const span = btn.querySelector("span");
       let count = parseInt(span.textContent || "0", 10) + 1;
-      span.textContent = count; // 先在畫面上即時更新
-    
-      fetch(`${SCRIPT_URL}?row=${row}&likes=${count}`, { method: "PUT" })
-        .then(res => res.text())
-        .then(responseText => {
-          console.log("PUT 回應:", responseText);
-          // 重新載入留言列表，確保畫面資料為最新
-          loadMessages();
-        })
-        .catch(err => {
-          console.error("更新愛心數發生錯誤:", err);
-          alert("更新愛心失敗，請稍後再試！");
-        });
+      span.textContent = count;
+      // 若有需要，可額外加上動畫效果或提醒訊息，此處僅更新 DOM
     }
     
     // 頁面載入後讀取留言
