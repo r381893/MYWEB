@@ -7,38 +7,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>庫洛米留言板 ❤️</h1>
-
-    <div class="form">
-      <!-- 留言輸入區 -->
-      <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
-
-      <!-- 發言者選項 -->
-      <div class="name-select">
-        <label><input type="radio" name="username" value="JACK"> JACK</label>
-        <label><input type="radio" name="username" value="LUZIA"> LUZIA</label>
-        <label><input type="radio" name="username" value="other"> 其他</label>
-        <input type="text" id="customName" placeholder="請輸入你的名字">
-      </div>
-
-      <!-- 貼圖列 -->
-      <div class="stickers">
-        <button onclick="addSticker('😍')">😍</button>
-        <button onclick="addSticker('😂')">😂</button>
-        <button onclick="addSticker('😎')">😎</button>
-        <button onclick="addSticker('🤔')">🤔</button>
-        <button onclick="addSticker('😭')">😭</button>
-      </div>
-
-      <!-- 送出留言 -->
-      <button onclick="submitMessage()">送出留言</button>
-    </div>
-
-    <!-- 留言顯示區 -->
-    <div id="messages"></div>
+  <div class="wrapper">
+    <header>
+      <!-- 使用內建頭像或你指定的庫洛米 LOGO -->
+      <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=Kuromi" alt="庫洛米LOGO" class="logo">
+      <h1>庫洛米留言板 ❤️</h1>
+    </header>
+    <main>
+      <section class="form-section">
+        <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
+        <div class="name-select">
+          <label><input type="radio" name="username" value="JACK"> JACK</label>
+          <label><input type="radio" name="username" value="LUZIA"> LUZIA</label>
+          <label><input type="radio" name="username" value="other"> 其他</label>
+          <input type="text" id="customName" placeholder="請輸入你的名字">
+        </div>
+        <div class="stickers">
+          <button onclick="addSticker('😍')">😍</button>
+          <button onclick="addSticker('😂')">😂</button>
+          <button onclick="addSticker('😎')">😎</button>
+          <button onclick="addSticker('🤔')">🤔</button>
+          <button onclick="addSticker('😭')">😭</button>
+        </div>
+        <button class="submit-btn" onclick="submitMessage()">送出留言</button>
+      </section>
+      <section id="messages" class="messages-section"></section>
+    </main>
+    <footer>
+      <p>© 2025 庫洛米留言板 All Rights Reserved</p>
+    </footer>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
