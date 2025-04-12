@@ -1,127 +1,175 @@
-/* 整體設定 */
-body {
+/* Reset 與全域設定 */
+* {
   margin: 0;
-  font-family: "Noto Sans TC", sans-serif;
-  background: linear-gradient(to right, #ffe6f0, #fffaf5); /* 粉色漸層背景 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: linear-gradient(135deg, #ffe6f0, #fffaf5);
+  color: #333;
 }
 
-.container {
-  max-width: 600px;
-  width: 90%;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9); /* 半透明白底 */
+/* 外層容器 */
+.wrapper {
+  max-width: 700px;
+  margin: 30px auto;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-h1 {
-  color: #e83e8c;
+/* Header */
+header {
   text-align: center;
-  margin-bottom: 20px;
+  padding: 20px;
+  background: #ffd6e5;
+  border-bottom: 1px solid #f7c2cf;
+}
+header .logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+header h1 {
+  font-size: 2rem;
+  color: #e83e8c;
 }
 
-/* 表單區域 */
-textarea,
-input {
+/* Main 內容 */
+main {
+  padding: 20px;
+}
+.form-section textarea {
   width: 100%;
   padding: 10px;
-  margin: 5px 0;
-  border-radius: 8px;
   border: 1px solid #e83e8c;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  resize: vertical;
   font-size: 1rem;
 }
-
-button {
-  background-color: #e83e8c;
-  color: white;
-  padding: 10px;
-  border: none;
+.name-select {
+  margin-bottom: 10px;
+}
+.name-select label {
+  margin-right: 15px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.name-select input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #e83e8c;
   border-radius: 8px;
-  margin-top: 5px;
+  font-size: 1rem;
+}
+.stickers {
+  margin-bottom: 10px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.stickers button {
+  font-size: 1.8rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: transform 0.2s;
+}
+.stickers button:hover {
+  transform: scale(1.2);
+}
+.submit-btn {
+  display: block;
+  width: 100%;
+  background-color: #e83e8c;
+  color: #fff;
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
 }
-
-button:hover {
+.submit-btn:hover {
   background-color: #d6336c;
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
-/* 發言者選項 */
-.name-select label {
-  margin-right: 10px;
-}
-
-/* 貼圖按鈕區 */
-.stickers {
-  overflow-x: auto;
-  white-space: nowrap;
-  margin-bottom: 5px;
-}
-
-.stickers button {
-  font-size: 20px;
-  background-color: #e83e8c;
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
-  margin-right: 3px;
-  cursor: pointer;
-}
-
-/* 留言顯示區 */
-#messages {
+/* 留言區 */
+.messages-section {
   margin-top: 20px;
   max-height: 500px;
   overflow-y: auto;
 }
-
-#messages::-webkit-scrollbar {
+.messages-section::-webkit-scrollbar {
   width: 8px;
 }
-
-#messages::-webkit-scrollbar-thumb {
+.messages-section::-webkit-scrollbar-thumb {
   background: #ffb3c1;
   border-radius: 5px;
 }
-
-/* 單一留言樣式 */
 .message {
-  background: rgba(255, 255, 255, 0.95);
+  background: #fff;
+  border: 1px solid #f0f0f0;
   border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
   animation: fadeIn 0.5s;
 }
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  vertical-align: middle;
-  margin-right: 5px;
+.message p {
+  margin-top: 8px;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+.message .like-btn {
+  background: none;
+  border: none;
+  color: #d6336c;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.message .like-btn span {
+  margin-left: 5px;
+  font-size: 1rem;
 }
 
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #ffd6e5;
+  border-top: 1px solid #f7c2cf;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 動畫 */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* 手機版 RWD 調整 */
+/* RWD 調整 */
 @media (max-width: 600px) {
-  h1 {
-    font-size: 1.8rem;
+  .wrapper {
+    margin: 10px;
   }
-  textarea,
-  input {
+  header h1 {
+    font-size: 1.6rem;
+  }
+  .submit-btn {
     font-size: 1rem;
   }
-  button {
-    font-size: 1rem;
-    padding: 8px;
+  .message {
+    padding: 10px;
+  }
+  .message p {
+    font-size: 0.9rem;
   }
 }
