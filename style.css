@@ -1,175 +1,156 @@
-/* Reset 與全域設定 */
-* {
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: 'Noto Sans TC', sans-serif;
-  background: linear-gradient(135deg, #ffe6f0, #fffaf5);
+  font-family: "Noto Sans TC", sans-serif;
+  background: linear-gradient(to right, #fff0f5, #ffe6f0);
   color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
-/* 外層容器 */
-.wrapper {
-  max-width: 700px;
+.container {
+  width: 95%;
+  max-width: 520px;
   margin: 30px auto;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
 }
 
-/* Header */
-header {
+/* 標題 */
+h1 {
   text-align: center;
-  padding: 20px;
-  background: #ffd6e5;
-  border-bottom: 1px solid #f7c2cf;
-}
-header .logo {
-  width: 80px;
-  margin-bottom: 10px;
-}
-header h1 {
-  font-size: 2rem;
-  color: #e83e8c;
+  font-size: 1.8rem;
+  color: #d63384;
+  margin-bottom: 20px;
 }
 
-/* Main 內容 */
-main {
-  padding: 20px;
-}
-.form-section textarea {
+/* 表單區 */
+textarea,
+input[type="text"] {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #e83e8c;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  resize: vertical;
+  padding: 8px 12px;
   font-size: 1rem;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6a5b6;
+  box-sizing: border-box;
 }
+
 .name-select {
   margin-bottom: 10px;
 }
 .name-select label {
-  margin-right: 15px;
-  font-size: 1rem;
-  cursor: pointer;
+  margin-right: 10px;
+  font-size: 0.95rem;
 }
 .name-select input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  border: 1px solid #e83e8c;
-  border-radius: 8px;
-  font-size: 1rem;
+  margin-top: 6px;
 }
+
+/* 貼圖區 */
 .stickers {
   margin-bottom: 10px;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 .stickers button {
-  font-size: 1.8rem;
+  font-size: 20px;
+  background: none;
   border: none;
-  background: transparent;
+  margin-right: 5px;
   cursor: pointer;
-  margin-right: 8px;
   transition: transform 0.2s;
 }
 .stickers button:hover {
   transform: scale(1.2);
 }
-.submit-btn {
-  display: block;
+
+/* 提交按鈕 */
+button.submit-btn {
   width: 100%;
-  background-color: #e83e8c;
+  padding: 10px;
+  font-size: 1rem;
+  background: #d63384;
   color: #fff;
   border: none;
-  padding: 12px 0;
   border-radius: 8px;
-  font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  transition: background 0.3s ease;
 }
-.submit-btn:hover {
-  background-color: #d6336c;
-  transform: scale(1.02);
+button.submit-btn:hover {
+  background: #b3246a;
 }
 
 /* 留言區 */
-.messages-section {
+#messages {
   margin-top: 20px;
-  max-height: 500px;
+  max-height: 480px;
   overflow-y: auto;
 }
-.messages-section::-webkit-scrollbar {
-  width: 8px;
+#messages::-webkit-scrollbar {
+  width: 6px;
 }
-.messages-section::-webkit-scrollbar-thumb {
-  background: #ffb3c1;
+#messages::-webkit-scrollbar-thumb {
+  background: #ffc0cb;
   border-radius: 5px;
 }
+
+/* 每一則留言樣式 */
 .message {
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #eee;
+  border-left: 5px solid #ff80ab;
   border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-  animation: fadeIn 0.5s;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  animation: fadeIn 0.3s;
+}
+.message strong {
+  font-size: 1rem;
+  color: #444;
+}
+.message small {
+  display: block;
+  margin-top: 4px;
+  color: #888;
+  font-size: 0.8rem;
 }
 .message p {
-  margin-top: 8px;
+  margin: 10px 0 5px;
+  font-size: 0.95rem;
   line-height: 1.5;
-  font-size: 1rem;
 }
-.message .like-btn {
-  background: none;
+.like-btn {
+  font-size: 1rem;
+  background: #ffe2ec;
+  color: #e83e8c;
   border: none;
-  color: #d6336c;
-  font-size: 1.2rem;
+  padding: 4px 10px;
+  border-radius: 20px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  margin-top: 10px;
+  gap: 5px;
 }
-.message .like-btn span {
-  margin-left: 5px;
-  font-size: 1rem;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 15px;
-  background: #ffd6e5;
-  border-top: 1px solid #f7c2cf;
-  font-size: 0.9rem;
-  color: #555;
+.like-btn:hover {
+  background: #ffc8da;
 }
 
-/* 動畫 */
+/* 淡入動畫 */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* RWD 調整 */
-@media (max-width: 600px) {
-  .wrapper {
-    margin: 10px;
+/* 手機版調整 */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
   }
-  header h1 {
-    font-size: 1.6rem;
-  }
-  .submit-btn {
-    font-size: 1rem;
-  }
-  .message {
-    padding: 10px;
-  }
-  .message p {
-    font-size: 0.9rem;
+  .container {
+    margin: 20px 10px;
   }
 }
