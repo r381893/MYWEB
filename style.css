@@ -25,7 +25,8 @@ h1 {
 }
 
 /* 表單區域 */
-textarea, input {
+textarea,
+input {
   width: 100%;
   padding: 10px;
   margin: 5px 0;
@@ -115,7 +116,8 @@ button:hover {
   h1 {
     font-size: 1.8rem;
   }
-  textarea, input {
+  textarea,
+  input {
     font-size: 1rem;
   }
   button {
