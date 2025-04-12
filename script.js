@@ -1,9 +1,10 @@
-const scriptURL = "https://script.google.com/macros/s/AKfycbyYLRUgXyk7odMp2i9NBoRA9OwnUQxh_fDY0wdtnYlPh6_Ra56MtU8HvaOEahXQvIT7";
+// 請將下面這個網址替換成你自己的 Apps Script 部署網址
+const scriptURL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
 
 let userIP = "";
 fetch("https://api.ipify.org?format=json")
-.then(res => res.json())
-.then(data => userIP = data.ip);
+  .then(res => res.json())
+  .then(data => userIP = data.ip);
 
 document.querySelectorAll('input[name="username"]').forEach(radio => {
   radio.addEventListener('change', function() {
@@ -36,7 +37,8 @@ function submitMessage() {
     .then(() => {
       document.getElementById("message").value = "";
       loadMessages();
-    });
+    })
+    .catch(err => console.error("錯誤:", err));
 }
 
 function loadMessages() {
@@ -47,16 +49,23 @@ function loadMessages() {
       container.innerHTML = "";
       data.reverse().forEach(item => {
         container.innerHTML += `
-        <div class="message">
-          <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=${item.name}" class="avatar">
-          <strong>${item.name}</strong><br>
-          <small>${item.time} | ${item.ip}</small>
-          <p>${item.message}</p>
-        </div>
+          <div class="message">
+            <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=${item.name}" class="avatar">
+            <strong>${item.name}</strong><br>
+            <small>${item.time} | ${item.ip}</small>
+            <p>${item.message}</p>
+            <button class="like-btn" onclick="likeMessage(this)">❤️ <span>${item.likes || 0}</span></button>
+          </div>
         `;
       });
-    });
+    })
+    .catch(err => console.error("讀取留言發生錯誤:", err));
+}
+
+function likeMessage(btn) {
+  const span = btn.querySelector("span");
+  let count = parseInt(span.textContent, 10) + 1;
+  span.textContent = count;
 }
 
 window.onload = loadMessages;
-
