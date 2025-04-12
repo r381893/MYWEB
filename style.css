@@ -15,7 +15,7 @@ body {
   padding: 20px;
   background: rgba(255, 255, 255, 0.9); /* 半透明白底 */
   border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -50,6 +50,11 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* 發言者選項 */
+.name-select label {
+  margin-right: 10px;
+}
+
 /* 貼圖按鈕區 */
 .stickers {
   overflow-x: auto;
@@ -60,9 +65,11 @@ button:hover {
 .stickers button {
   font-size: 20px;
   background-color: #e83e8c;
+  border: none;
   border-radius: 50%;
   padding: 5px;
   margin-right: 3px;
+  cursor: pointer;
 }
 
 /* 留言顯示區 */
@@ -75,6 +82,7 @@ button:hover {
 #messages::-webkit-scrollbar {
   width: 8px;
 }
+
 #messages::-webkit-scrollbar-thumb {
   background: #ffb3c1;
   border-radius: 5px;
