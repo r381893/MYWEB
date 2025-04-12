@@ -1,50 +1,71 @@
+/* 整體設定 */
 body {
   margin: 0;
   font-family: "Noto Sans TC", sans-serif;
-  background: url('https://i.imgur.com/abLMmGO.jpg') no-repeat center center fixed;
-
-  background-size: cover;
+  background: linear-gradient(to right, #ffe6f0, #fffaf5); /* 粉色漸層背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .container {
   max-width: 600px;
-  margin: auto;
+  width: 90%;
   padding: 20px;
-  color: #333;
+  background: rgba(255, 255, 255, 0.9); /* 半透明白底 */
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 h1 {
   color: #e83e8c;
   text-align: center;
+  margin-bottom: 20px;
 }
 
+/* 表單區域 */
 textarea, input {
   width: 100%;
   padding: 10px;
   margin: 5px 0;
   border-radius: 8px;
   border: 1px solid #e83e8c;
+  font-size: 1rem;
 }
 
 button {
   background-color: #e83e8c;
-  color: #fff;
+  color: white;
   padding: 10px;
   border: none;
   border-radius: 8px;
   margin-top: 5px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 button:hover {
   background-color: #d6336c;
+  transform: scale(1.05);
 }
 
-.name-select label {
-  margin-right: 10px;
+/* 貼圖按鈕區 */
+.stickers {
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 5px;
 }
 
+.stickers button {
+  font-size: 20px;
+  background-color: #e83e8c;
+  border-radius: 50%;
+  padding: 5px;
+  margin-right: 3px;
+}
+
+/* 留言顯示區 */
 #messages {
   margin-top: 20px;
   max-height: 500px;
@@ -59,8 +80,9 @@ button:hover {
   border-radius: 5px;
 }
 
+/* 單一留言樣式 */
 .message {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
@@ -80,12 +102,16 @@ button:hover {
   to { opacity: 1; }
 }
 
-.stickers {
-  overflow-x: auto;
-  white-space: nowrap;
-  margin-bottom: 5px;
-}
-
-.stickers button {
-  font-size: 20px;
+/* 手機版 RWD 調整 */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  textarea, input {
+    font-size: 1rem;
+  }
+  button {
+    font-size: 1rem;
+    padding: 8px;
+  }
 }
