@@ -1,23 +1,29 @@
-body {
+/* 全域重置與基本設定 */
+* {
   margin: 0;
   padding: 0;
-  font-family: "Noto Sans TC", sans-serif;
-  background: linear-gradient(to right, #fff0f5, #ffe6f0);
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: linear-gradient(135deg, #fff0f5, #ffe6f0);
   color: #333;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
+  padding: 20px;
 }
 
+/* 留言板容器 */
 .container {
-  width: 95%;
+  width: 100%;
   max-width: 520px;
-  margin: 30px auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.95); /* 半透明白底 */
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   padding: 20px;
+  margin: 20px auto;
 }
 
 /* 標題 */
@@ -28,18 +34,17 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* 表單區 */
+/* 表單區段 */
 textarea,
 input[type="text"] {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 1rem;
   margin-bottom: 10px;
-  border-radius: 8px;
   border: 1px solid #e6a5b6;
-  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #fff;
 }
-
 .name-select {
   margin-bottom: 10px;
 }
@@ -54,11 +59,13 @@ input[type="text"] {
 /* 貼圖區 */
 .stickers {
   margin-bottom: 10px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .stickers button {
   font-size: 20px;
-  background: none;
   border: none;
+  background: none;
   margin-right: 5px;
   cursor: pointer;
   transition: transform 0.2s;
@@ -67,7 +74,7 @@ input[type="text"] {
   transform: scale(1.2);
 }
 
-/* 提交按鈕 */
+/* 送出按鈕 */
 button.submit-btn {
   width: 100%;
   padding: 10px;
@@ -77,13 +84,14 @@ button.submit-btn {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s;
 }
 button.submit-btn:hover {
   background: #b3246a;
+  transform: scale(1.02);
 }
 
-/* 留言區 */
+/* 留言顯示區 */
 #messages {
   margin-top: 20px;
   max-height: 480px;
@@ -97,7 +105,7 @@ button.submit-btn:hover {
   border-radius: 5px;
 }
 
-/* 每一則留言樣式 */
+/* 每一則留言 */
 .message {
   background: #fff;
   border: 1px solid #eee;
@@ -134,9 +142,19 @@ button.submit-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  transition: background 0.3s;
 }
 .like-btn:hover {
   background: #ffc8da;
+}
+
+/* 控制頭像尺寸 */
+.avatar {
+  width: 50px;  /* 固定寬度 */
+  height: 50px; /* 固定高度 */
+  border-radius: 50%;
+  object-fit: cover; /* 保持圖片比例填滿 */
+  margin-right: 8px;
 }
 
 /* 淡入動畫 */
@@ -145,12 +163,27 @@ button.submit-btn:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 手機版調整 */
+/* 手機版適配 */
 @media (max-width: 480px) {
+  .container {
+    margin: 10px;
+    padding: 15px;
+  }
   h1 {
     font-size: 1.5rem;
   }
-  .container {
-    margin: 20px 10px;
+  button.submit-btn {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+  .message {
+    padding: 10px;
+  }
+  .message p {
+    font-size: 0.9rem;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
   }
 }
