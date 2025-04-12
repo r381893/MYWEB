@@ -1,285 +1,39 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <title>可愛留言板 ❤️</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* 整體背景與排版 */
-    body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background: linear-gradient(to right, #fffaf5, #ffe6f0);
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #d6336c;
-      margin-bottom: 1rem;
-    }
-    /* 留言板外框 */
-    #board {
-      width: 100%;
-      max-width: 800px;
-      background: #ffffff;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    /* 表單區塊 */
-    #form-section {
-      background: #ffcfe0;
-      padding: 1rem;
-      border-bottom: 1px solid #f7c2cf;
-    }
-    #form-section textarea {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #f7c2cf;
-      border-radius: 5px;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      resize: vertical;
-    }
-    /* 發言者選擇區 */
-    #name-choice {
-      margin: 0.5rem 0;
-    }
-    #name-choice label {
-      margin-right: 1rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    #name-choice input[type="radio"] {
-      margin-right: 0.3rem;
-    }
-    #customName {
-      padding: 0.5rem;
-      border: 1px solid #f7c2cf;
-      border-radius: 5px;
-      margin-top: 0.5rem;
-      display: none;
-      width: calc(100% - 1rem);
-    }
-    /* 貼圖功能 */
-    #sticker-panel {
-      margin: 0.5rem 0;
-    }
-    #sticker-panel button {
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      transition: transform 0.2s;
-      margin-right: 0.3rem;
-    }
-    #sticker-panel button:hover {
-      transform: scale(1.2);
-    }
-    /* 送出留言按鈕 */
-    #form-section button.submit-btn {
-      background: #d6336c;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      font-size: 1.1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    #form-section button.submit-btn:hover {
-      background: #b22a58;
-    }
-    /* 留言顯示區 */
-    #messages {
-      padding: 1rem;
-      max-height: 600px;
-      overflow-y: auto;
-    }
-    .message {
-      background: #fff;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid #f0f0f0;
-      animation: fadeIn 0.5s ease-in;
-    }
-    .message > strong {
-      font-size: 1.2rem;
-      color: #333;
-    }
-    .message > span {
-      font-size: 0.9rem;
-      color: #888;
-    }
-    .message p {
-      line-height: 1.5;
-      margin: 0.8rem 0;
-      font-size: 1rem;
-    }
-    /* 愛心按鈕（僅在前端更新數字） */
-    .like-btn {
-      background: none;
-      border: none;
-      color: #d6336c;
-      font-size: 1.4rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: transform 0.2s;
-    }
-    .like-btn:hover {
-      transform: scale(1.1);
-    }
-    .like-btn span {
-      font-size: 1rem;
-      color: #555;
-    }
-    /* 簡單的淡入動畫 */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>庫洛米留言板</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="board">
-    <div id="form-section">
-      <h1>❤️ 可愛留言板 ❤️</h1>
-      <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
-      
-      <!-- 發言者選項 -->
-      <div id="name-choice">
-        <label>
-          <input type="radio" name="username" value="JACK"> JACK
-        </label>
-        <label>
-          <input type="radio" name="username" value="LUZIA"> LUZIA
-        </label>
-        <label>
-          <input type="radio" name="username" value="other"> 其他
-        </label>
-        <input type="text" id="customName" placeholder="請輸入你的名字">
-      </div>
-      
-      <!-- 貼圖功能 -->
-      <div id="sticker-panel">
-        <button type="button" onclick="addSticker('😀')">😀</button>
-        <button type="button" onclick="addSticker('😍')">😍</button>
-        <button type="button" onclick="addSticker('😎')">😎</button>
-        <button type="button" onclick="addSticker('🤔')">🤔</button>
-        <button type="button" onclick="addSticker('😂')">😂</button>
-      </div>
-      
-      <!-- 送出留言按鈕 -->
-      <button class="submit-btn" onclick="submitMessage()">送出留言</button>
+<div class="container">
+  <h1>庫洛米留言板 ❤️</h1>
+
+  <div class="form">
+    <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
+
+    <div class="name-select">
+      <label><input type="radio" name="username" value="JACK"> JACK</label>
+      <label><input type="radio" name="username" value="LUZIA"> LUZIA</label>
+      <label><input type="radio" name="username" value="other"> 其他</label>
+      <input type="text" id="customName" placeholder="請輸入你的名字">
     </div>
-    <div id="messages"></div>
+
+    <div class="stickers">
+      <button onclick="addSticker('😍')">😍</button>
+      <button onclick="addSticker('😂')">😂</button>
+      <button onclick="addSticker('😎')">😎</button>
+      <button onclick="addSticker('🤔')">🤔</button>
+      <button onclick="addSticker('😭')">😭</button>
+    </div>
+
+    <button onclick="submitMessage()">送出留言</button>
   </div>
 
-  <script>
-    // ★ 請將下列 URL 更新為你部署後的 Google Apps Script 網址（用於 GET 與 POST）
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk1SjKyzHJIP6-ZFtokhqOH1bmzHduffQuhrkaL1jYS3swQ7ixBWtxEsi89-fABNSV/exec";
-    
-    // 取得使用者 IP（可選功能）
-    let userIP = "";
-    fetch("https://api.ipify.org?format=json")
-      .then(res => res.json())
-      .then(data => { userIP = data.ip || ""; })
-      .catch(err => console.error("取得 IP 錯誤:", err));
-    
-    // 控制「其他」選項顯示自訂姓名輸入框
-    document.querySelectorAll('input[name="username"]').forEach(radio => {
-      radio.addEventListener('change', function(){
-        document.getElementById("customName").style.display = (this.value === "other") ? "block" : "none";
-      });
-    });
-    
-    // 貼圖功能：將選定的貼圖加到留言內容中
-    function addSticker(sticker) {
-      const messageTextArea = document.getElementById("message");
-      messageTextArea.value += " " + sticker;
-      // 簡單動畫效果：短暫改變背景色
-      messageTextArea.style.transition = "background-color 0.3s";
-      messageTextArea.style.backgroundColor = "#fffded";
-      setTimeout(() => {
-        messageTextArea.style.backgroundColor = "";
-      }, 300);
-    }
-    
-    // 送出留言 (POST 請求)
-    function submitMessage() {
-      // 取得發言者名稱
-      let name;
-      const selected = document.querySelector('input[name="username"]:checked');
-      if (selected) {
-        if (selected.value === "other") {
-          name = document.getElementById("customName").value.trim() || "匿名";
-        } else {
-          name = selected.value;
-        }
-      } else {
-        name = "匿名";
-      }
-      
-      const message = document.getElementById("message").value.trim();
-      if (!message) return;
-      
-      const formData = new URLSearchParams();
-      formData.append("name", name);
-      formData.append("message", message);
-      formData.append("ip", userIP);
-      // 初始愛心數存入 0（之後僅在頁面上更新，不送出至後端）
-      formData.append("likes", 0);
-      
-      fetch(SCRIPT_URL, { method: "POST", body: formData })
-        .then(res => res.json())
-        .then(response => {
-          console.log("POST 回應:", response);
-          document.getElementById("message").value = "";
-          loadMessages();
-        })
-        .catch(err => console.error("送出留言發生錯誤:", err));
-    }
-    
-    // 讀取所有留言 (GET 請求)
-    function loadMessages() {
-      fetch(SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("messages");
-          container.innerHTML = "";
-          // 使用 reverse() 讓最新留言在最前面
-          data.reverse().forEach(entry => {
-            const div = document.createElement("div");
-            div.className = "message";
-            div.innerHTML = `
-              <strong>👤 ${entry.name}</strong>
-              <br><span>🕒 ${entry.time} | 🌐 ${entry.ip}</span>
-              <p>${entry.message}</p>
-              <button class="like-btn" onclick="likeMessage(this)">
-                ❤️ <span>${entry.likes || 0}</span>
-              </button>
-            `;
-            container.appendChild(div);
-          });
-        })
-        .catch(err => console.error("讀取留言發生錯誤:", err));
-    }
-    
-    // 愛心更新：僅於頁面更新數字（不送出到後端）
-    function likeMessage(btn) {
-      const span = btn.querySelector("span");
-      let count = parseInt(span.textContent || "0", 10) + 1;
-      span.textContent = count;
-    }
-    
-    // 頁面載入後自動讀取留言
-    window.onload = loadMessages;
-  </script>
+  <div id="messages"></div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
