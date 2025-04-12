@@ -4,37 +4,35 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  font-family: "Georgia", serif;
-  /* 背景用一張柔和的自然風景圖（請根據需要替換 URL） */
-  background: url('https://i.imgur.com/0uLH7oD.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: #3e3e3e;
+  font-family: 'Noto Sans TC', sans-serif;
+  /* 淺藍色漸層背景 */
+  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  color: #333;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px;
   min-height: 100vh;
+  padding: 20px;
 }
 
-/* 留言板容器，帶有手繪風格邊框與柔和陰影 */
+/* 留言板容器 */
 .container {
   width: 100%;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 3px solid #d8a499; /* 手繪風感的邊框顏色 */
+  max-width: 520px;
+  background: rgba(255, 255, 255, 0.95); /* 半透明白底 */
+  border: 3px solid #81d4fa;  /* 淺藍色邊框 */
   border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
   margin: 20px auto;
 }
 
 /* 標題 */
 h1 {
   text-align: center;
-  font-size: 2rem;
-  color: #a65c3a;
+  font-size: 1.8rem;
+  color: #0288d1;  /* 深藍色，與淺藍互補 */
   margin-bottom: 20px;
   letter-spacing: 1px;
 }
@@ -46,9 +44,9 @@ input[type="text"] {
   padding: 10px 12px;
   font-size: 1rem;
   margin-bottom: 10px;
-  border: 1px solid #d8a499;
+  border: 1px solid #4fc3f7;
   border-radius: 8px;
-  background-color: #fffaf3;
+  background-color: #e1f5fe;
 }
 
 .name-select {
@@ -58,7 +56,7 @@ input[type="text"] {
 .name-select label {
   margin-right: 10px;
   font-size: 0.95rem;
-  color: #6b4f40;
+  color: #0277bd;
 }
 
 .name-select input[type="text"] {
@@ -75,7 +73,7 @@ input[type="text"] {
 .stickers button {
   font-size: 22px;
   border: none;
-  background: transparent;
+  background: none;
   margin-right: 5px;
   cursor: pointer;
   transition: transform 0.2s;
@@ -90,7 +88,7 @@ button.submit-btn {
   width: 100%;
   padding: 10px;
   font-size: 1rem;
-  background: #a65c3a;
+  background: #0288d1;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -99,7 +97,7 @@ button.submit-btn {
 }
 
 button.submit-btn:hover {
-  background: #8b4726;
+  background: #0277bd;
   transform: scale(1.02);
 }
 
@@ -115,15 +113,15 @@ button.submit-btn:hover {
 }
 
 #messages::-webkit-scrollbar-thumb {
-  background: #f4c2a1;
+  background: #81d4fa;
   border-radius: 5px;
 }
 
-/* 單一留言樣式 */
+/* 每一則留言 */
 .message {
   background: #fff;
   border: 1px solid #eee;
-  border-left: 5px solid #f4c2a1;
+  border-left: 5px solid #4fc3f7;
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 12px;
@@ -133,7 +131,7 @@ button.submit-btn:hover {
 
 .message strong {
   font-size: 1rem;
-  color: #6b4f40;
+  color: #0277bd;
 }
 
 .message small {
@@ -151,8 +149,8 @@ button.submit-btn:hover {
 
 .like-btn {
   font-size: 1rem;
-  background: #ffe2ec;
-  color: #d63384;
+  background: #e1f5fe;
+  color: #0288d1;
   border: none;
   padding: 4px 10px;
   border-radius: 20px;
@@ -164,10 +162,10 @@ button.submit-btn:hover {
 }
 
 .like-btn:hover {
-  background: #ffc8da;
+  background: #b3e5fc;
 }
 
-/* 頭像固定大小 */
+/* 控制頭像尺寸 */
 .avatar {
   width: 50px;
   height: 50px;
