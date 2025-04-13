@@ -2,14 +2,26 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 加入 maximum-scale=1.0 與 user-scalable=no 限制縮放，讓版面在手機上更穩定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>庫洛米留言板</title>
   <link rel="stylesheet" href="style.css">
+  <!-- 可根據需要加入一些內嵌調整(非必要，可在 style.css 裡調整) -->
+  <style>
+    /* 確保手機上容器左右邊距較窄 */
+    body {
+      padding: 5px;
+    }
+    .container {
+      padding: 15px;
+      margin: 10px auto;
+    }
+  </style>
 </head>
 <body>
-  <div class="wrapper">
+  <div class="container">
     <header>
-      <!-- 此處已移除 logo 圖片 -->
+      <!-- 移除了大圖或 Logo，只保留簡潔標題 -->
       <h1>庫洛米留言板 ❤️</h1>
     </header>
     <main>
