@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <!-- 加入 maximum-scale=1.0 與 user-scalable=no 限制縮放，讓版面在手機上更穩定 -->
@@ -12,26 +13,40 @@
     body {
       padding: 5px;
     }
+
     .container {
       padding: 15px;
       margin: 10px auto;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <!-- 移除了大圖或 Logo，只保留簡潔標題 -->
       <h1>庫洛米留言板 ❤️</h1>
+      <div class="header-controls">
+        <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+      </div>
     </header>
     <main>
       <section class="form-section">
         <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
+
         <div class="name-select">
-          <label><input type="radio" name="username" value="JACK"> JACK</label>
-          <label><input type="radio" name="username" value="LUZIA"> LUZIA</label>
-          <label><input type="radio" name="username" value="other"> 其他</label>
-          <input type="text" id="customName" placeholder="請輸入你的名字">
+          <p class="label-text">選擇你的角色：</p>
+          <div class="avatar-selector">
+            <button class="avatar-option selected" onclick="selectAvatar('Kuromi', this)" title="酷洛米">😈</button>
+            <button class="avatar-option" onclick="selectAvatar('MyMelody', this)" title="美樂蒂">🐰</button>
+            <button class="avatar-option" onclick="selectAvatar('Baku', this)" title="巴庫">🦇</button>
+            <button class="avatar-option" onclick="selectAvatar('other', this)" title="其他">👤</button>
+          </div>
+          <input type="text" id="customName" placeholder="請輸入你的名字" style="display:none;">
+        </div>
+
+        <div class="password-group">
+          <input type="password" id="deletePassword" placeholder="設定刪除密碼 (選填)">
         </div>
         <div class="stickers">
           <button onclick="addSticker('😍')">😍</button>
@@ -48,6 +63,10 @@
       <p>© 2025 庫洛米留言板 All Rights Reserved</p>
     </footer>
   </div>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
