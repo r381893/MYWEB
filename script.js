@@ -123,6 +123,8 @@ function likeMessage(id, currentLikes, btn) {
 
 function showLikeAnimation(btn) {
   const rect = btn.getBoundingClientRect();
+
+  // Original floating emoji
   const emoji = document.createElement("div");
   emoji.textContent = Math.random() > 0.5 ? "💀" : "💜"; // 隨機出現骷髏或愛心
   emoji.className = "floating-emoji";
@@ -130,9 +132,21 @@ function showLikeAnimation(btn) {
   emoji.style.top = rect.top + "px";
 
   document.body.appendChild(emoji);
-
-  // 動畫結束後移除
   setTimeout(() => emoji.remove(), 1000);
+
+  // Super Like Pop-up (Random chance)
+  if (Math.random() > 0.7) {
+    const superLike = document.createElement("div");
+    const phrases = ["謝謝你! 💜", "Kuromi Love!", "太棒了! 💀", "喜歡! ✨"];
+    superLike.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+    superLike.className = "super-like";
+    // Position slightly above the button
+    superLike.style.left = (rect.left + 20) + "px";
+    superLike.style.top = (rect.top - 30) + "px";
+
+    document.body.appendChild(superLike);
+    setTimeout(() => superLike.remove(), 1500);
+  }
 }
 
 function toggleReply(id) {
@@ -234,7 +248,6 @@ window.onload = function () {
     document.body.style.backgroundImage = savedWallpaper;
   }
 };
-
 const wallpapers = [
   "url('images/background.png')",
   "linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)", // Blue gradient
@@ -251,3 +264,83 @@ function changeWallpaper() {
   document.body.style.backgroundImage = newWallpaper;
   localStorage.setItem("wallpaper", newWallpaper);
 }
+
+// --- New Features Implementation ---
+
+// 1. Falling Animation
+function startFallingAnimation() {
+  const container = document.getElementById('falling-container');
+  if (!container) return;
+
+  const items = ['🌸', '💀', '💜', '🎀', '✨'];
+
+  setInterval(() => {
+    const item = document.createElement('div');
+    item.textContent = items[Math.floor(Math.random() * items.length)];
+    item.className = 'falling-item';
+
+    // Random position and duration
+    item.style.left = Math.random() * 100 + 'vw';
+    item.style.animationDuration = (Math.random() * 3 + 3) + 's'; // 3-6s
+    item.style.fontSize = (Math.random() * 10 + 20) + 'px'; // 20-30px
+
+    container.appendChild(item);
+
+    // Cleanup
+    setTimeout(() => item.remove(), 6000);
+  }, 500); // Create new item every 500ms
+}
+
+// 2. Music Player
+function toggleMusic() {
+  const audio = document.getElementById('bg-music');
+  const btn = document.getElementById('music-btn');
+
+  if (audio.paused) {
+    audio.play();
+    btn.textContent = '⏸️';
+    btn.classList.add('playing');
+  } else {
+    audio.pause();
+    btn.textContent = '🎵';
+    btn.classList.remove('playing');
+  }
+}
+
+// 3. Search Bar
+function filterMessages() {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  const messages = document.querySelectorAll('.message');
+
+  messages.forEach(msg => {
+    const text = msg.innerText.toLowerCase();
+    if (text.includes(query)) {
+      msg.style.display = 'block';
+    } else {
+      msg.style.display = 'none';
+    }
+  });
+}
+
+// 4. Enhanced Like Animation (Override existing)
+// Note: The original showLikeAnimation at line 124 needs to be updated or we can overwrite it here if we are careful. 
+// However, since I am appending to the end, I should probably just let the original function exist and modify it or replace it.
+// But wait, the original function is defined earlier. 
+// To avoid conflict, I will rename this one or just rely on the fact that I can't easily replace the earlier one without a multi-replace.
+// Actually, I can just redefine it here and it might work depending on hoisting, but it's better to be clean.
+// I will use a different name and update the onclick in HTML? No, that's too much work.
+// I will just redefine it. In JS, the last definition wins if they are both function declarations.
+// BUT, function declarations are hoisted. If I have two, it might be ambiguous or the last one wins.
+// Let's try to replace the ORIGINAL function instead of appending a new one.
+
+// Wait, I see I am replacing from line 237. The original showLikeAnimation is at line 124.
+// I will NOT redefine showLikeAnimation here. I will use a separate tool call to update the original one if needed.
+// OR, I can just leave the original one as is for now and focus on the other features, then update the like animation separately.
+// The user wants "Enhanced Like". The original one is simple.
+// I will update the original showLikeAnimation in a separate step to be safe.
+
+// So for this step, I will just add the other features and fix the broken end of file.
+// I will also add the startFallingAnimation call to window.onload or just leave the event listener.
+
+// Initialize Falling Animation on Load
+window.addEventListener('load', startFallingAnimation);

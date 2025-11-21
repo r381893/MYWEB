@@ -47,12 +47,28 @@
       </div>
     </header>
 
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="🔍 搜尋留言..." oninput="filterMessages()">
+    </div>
+
     <section id="messages" class="messages-section"></section>
 
     <footer>
       <p>© 2025 庫洛米留言板 All Rights Reserved</p>
     </footer>
   </div>
+
+  <!-- Music Player -->
+  <div class="music-player">
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+    <audio id="bg-music" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <!-- Falling Animation Container -->
+  <div id="falling-container"></div>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
