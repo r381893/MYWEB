@@ -14,12 +14,6 @@
       <h1>庫洛米留言板 ❤️</h1>
       <div class="header-controls">
         <button id="wallpaper-btn" class="theme-btn" onclick="changeWallpaper()" title="更換背景">🎨 更換背景</button>
-        <div class="stickers">
-          <button onclick="addSticker('😂')">😂</button>
-          <button onclick="addSticker('😎')">😎</button>
-          <button onclick="addSticker('🤔')">🤔</button>
-          <button onclick="addSticker('😭')">😭</button>
-        </div>
       </div>
 
       <div class="avatar-selector" id="avatar-selector">
@@ -27,10 +21,30 @@
       </div>
 
       <div class="input-area">
-        <input type="text" id="nickname" placeholder="你的暱稱 (選填)" class="nickname-input">
+        <div class="nickname-row">
+          <input type="text" id="nickname" placeholder="你的暱稱 (選填)" class="nickname-input">
+          <div class="quick-nicknames">
+            <button onclick="setNickname('Luzia')">Luzia</button>
+            <button onclick="setNickname('Jack')">Jack</button>
+          </div>
+        </div>
         <textarea id="message" placeholder="留下你的訊息..."></textarea>
+
+        <div class="stickers">
+          <span onclick="addSticker('💀')">💀</span>
+          <span onclick="addSticker('💜')">💜</span>
+          <span onclick="addSticker('😈')">😈</span>
+          <span onclick="addSticker('🎀')">🎀</span>
+          <span onclick="addSticker('✨')">✨</span>
+          <span onclick="addSticker('🌸')">🌸</span>
+          <span onclick="addSticker('🍰')">🍰</span>
+          <span onclick="addSticker('🥺')">🥺</span>
+          <span onclick="addSticker('🔥')">🔥</span>
+          <span onclick="addSticker('👻')">👻</span>
+        </div>
+
+        <button class="submit-btn" onclick="submitMessage()">送出留言</button>
       </div>
-      <button class="submit-btn" onclick="submitMessage()">送出留言</button>
     </header>
 
     <section id="messages" class="messages-section"></section>

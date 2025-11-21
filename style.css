@@ -349,6 +349,50 @@ button.submit-btn:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+h1 {
+  margin-bottom: 10px;
+  font-size: 2em;
+  color: #ff69b4;
+  /* Hot pink */
+  text-shadow: 2px 2px 0px #fff, 4px 4px 0px #e6e6e6;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+  /* Cuter font */
+}
+
+.nickname-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.nickname-input {
+  flex: 1;
+  margin-bottom: 0 !important;
+  /* Override default input margin */
+}
+
+.quick-nicknames {
+  display: flex;
+  gap: 5px;
+}
+
+.quick-nicknames button {
+  background: #ffb7b2;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: transform 0.2s;
+}
+
+.quick-nicknames button:hover {
+  transform: scale(1.1);
+  background: #ff9e99;
+}
+
 .header-controls {
   display: flex;
   justify-content: space-between;

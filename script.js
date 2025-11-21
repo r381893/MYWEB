@@ -56,6 +56,10 @@ function selectAvatar(avatar) {
   });
 }
 
+function setNickname(name) {
+  document.getElementById('nickname').value = name;
+}
+
 // 貼圖功能
 function addSticker(emoji) {
   const messageInput = document.getElementById("message");
