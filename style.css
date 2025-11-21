@@ -7,8 +7,10 @@
 
 body {
   font-family: 'Noto Sans TC', sans-serif;
-  /* 淺藍色漸層背景 */
-  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  /* Sanrio Theme Background */
+  background: url('images/background.png') repeat center center fixed;
+  background-size: cover;
+  /* Or contain/auto depending on the pattern */
   color: #333;
   display: flex;
   justify-content: center;
@@ -18,154 +20,65 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* 深色模式變數與樣式 */
-body.dark-mode {
-  background: linear-gradient(135deg, #2b1055, #7597de);
-  color: #f0f0f0;
-}
-
-body.dark-mode .container {
-  background: rgba(30, 30, 40, 0.95);
-  border-color: #9c27b0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode h1 {
-  color: #e040fb;
-}
-
-body.dark-mode textarea,
-body.dark-mode input[type="text"],
-body.dark-mode input[type="password"] {
-  background-color: #4a148c;
-  color: #fff;
-  border-color: #7b1fa2;
-}
-
-body.dark-mode .message {
-  background: #2d2d44;
-  border-color: #444;
-  border-left-color: #e040fb;
-}
-
-body.dark-mode .message strong {
-  color: #ea80fc;
-}
-
-body.dark-mode .message small {
-  color: #bbb;
-}
-
-body.dark-mode .like-btn {
-  background: #4a148c;
-  color: #ea80fc;
-}
-
-body.dark-mode .like-btn:hover {
-  background: #6a1b9a;
-}
-
-/* 留言板容器 */
 .container {
-  width: 100%;
-  max-width: 520px;
   background: rgba(255, 255, 255, 0.95);
-  /* 半透明白底 */
-  border: 3px solid #81d4fa;
-  /* 淺藍色邊框 */
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  margin: 20px auto;
-}
-
-/* 標題 */
-h1 {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #0288d1;
-  /* 深藍色，與淺藍互補 */
-  margin-bottom: 20px;
-  letter-spacing: 1px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.header-controls {
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: flex;
-  gap: 10px;
-}
-
-.icon-btn,
-.theme-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 5px;
-  transition: transform 0.3s;
-}
-
-.icon-btn:hover,
-.theme-btn:hover {
-  transform: scale(1.2);
-}
-
-/* 表單區段 */
-textarea,
-input[type="text"],
-input[type="password"] {
   width: 100%;
-  padding: 10px 12px;
-  font-size: 1rem;
-  margin-bottom: 10px;
-  border: 1px solid #4fc3f7;
-  border-radius: 8px;
-  background-color: #e1f5fe;
+  max-width: 600px;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
 }
 
-.name-select {
-  margin-bottom: 15px;
-}
+/* ... (dark mode styles remain, but maybe override background for dark mode or keep it?) */
+/* Let's keep dark mode simple for now, maybe just darken the overlay */
 
-.label-text {
-  font-size: 0.9rem;
-  color: #0277bd;
-  margin-bottom: 5px;
-}
+/* ... */
 
 .avatar-selector {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  /* Allow wrapping if many avatars */
 }
 
 .avatar-option {
   font-size: 1.5rem;
-  background: #e1f5fe;
+  background: rgba(255, 255, 255, 0.8);
   border: 2px solid transparent;
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  width: 60px;
+  /* Larger for images */
+  height: 60px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .avatar-option:hover {
   transform: scale(1.1);
-  background: #b3e5fc;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255, 192, 203, 0.6);
+  /* Pink glow */
 }
 
 .avatar-option.selected {
-  border-color: #0288d1;
-  background: #81d4fa;
+  border-color: #ff69b4;
+  /* Hot pink */
+  background: #fff;
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(2, 136, 209, 0.4);
+  box-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
 }
 
 .name-select input[type="text"] {
@@ -194,6 +107,42 @@ input[type="password"] {
 
 .stickers button:hover {
   transform: scale(1.2);
+}
+
+/* 輸入框區域 */
+.input-area {
+  margin-bottom: 10px;
+}
+
+.input-area textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 2px solid #b3e5fc;
+  border-radius: 8px;
+  resize: none;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.nickname-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 2px solid #b3e5fc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.nickname-input:focus {
+  border-color: #0288d1;
+}
+
+.input-area textarea:focus {
+  border-color: #0288d1;
 }
 
 /* 送出按鈕 */
@@ -354,14 +303,7 @@ button.submit-btn:hover {
   }
 }
 
-body.dark-mode .delete-btn {
-  background: #3e2723;
-  color: #ff5252;
-}
-
-body.dark-mode .delete-btn:hover {
-  background: #5d4037;
-}
+/* Dark mode styles removed */
 
 /* 控制頭像尺寸 */
 .avatar {
@@ -383,6 +325,37 @@ body.dark-mode .delete-btn:hover {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 背景更換按鈕 */
+.theme-btn {
+  font-size: 1rem;
+  background: #f8bbd0;
+  color: #880e4f;
+  border: 2px solid #f48fb1;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.theme-btn:hover {
+  background: #f48fb1;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 /* 手機版調整 */

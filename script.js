@@ -20,73 +20,93 @@ fetch("https://api.ipify.org?format=json")
   .then(data => userIP = data.ip)
   .catch(err => console.error("IP取得錯誤:", err));
 
-let currentAvatar = "Kuromi"; // 預設頭像
+// Avatar Configuration
+const avatars = ['Kuromi', 'MyMelody', 'Pompompurin', 'Cinnamoroll', 'JACK'];
+let currentAvatar = 'Kuromi'; // Default
 
-function selectAvatar(avatar, btn) {
+function initAvatarSelector() {
+  const container = document.getElementById('avatar-selector');
+  if (!container) return;
+
+  container.innerHTML = '';
+  avatars.forEach(avatar => {
+    const btn = document.createElement('button');
+    btn.className = `avatar-option ${avatar === currentAvatar ? 'selected' : ''}`;
+    btn.onclick = () => selectAvatar(avatar);
+
+    const img = document.createElement('img');
+    img.src = `images/${avatar.toLowerCase()}.png`;
+    img.alt = avatar;
+
+    btn.appendChild(img);
+    container.appendChild(btn);
+  });
+}
+
+function selectAvatar(avatar) {
   currentAvatar = avatar;
+  // Update UI
+  const buttons = document.querySelectorAll('.avatar-option');
+  buttons.forEach(btn => {
+    if (btn.querySelector('img').alt === avatar) {
+      btn.classList.add('selected');
+    } else {
+      btn.classList.remove('selected');
+    }
+  });
+}
 
-  // 更新 UI 狀態
-  document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('selected'));
-  console.log("嘗試送出留言..."); // Debug
+// 貼圖功能
+function addSticker(emoji) {
+  const messageInput = document.getElementById("message");
+  messageInput.value += emoji;
+  messageInput.focus();
+}
+
+function submitMessage() {
   const message = document.getElementById("message").value.trim();
   if (!message) {
     alert("請輸入留言");
     return;
   }
 
-  let name = "匿名";
-
-  if (currentAvatar === "other") {
-    name = document.getElementById("customName").value.trim() || "匿名";
-  } else {
-    // 根據角色設定名字
-    const names = { "Kuromi": "酷洛米", "MyMelody": "美樂蒂", "Baku": "巴庫" };
-    name = names[currentAvatar] || "匿名";
-  }
-
-  const password = document.getElementById("deletePassword").value.trim();
+  let name = document.getElementById("nickname").value.trim() || "匿名";
+  localStorage.setItem("nickname", name !== "匿名" ? name : ""); // 記住暱稱
 
   // 寫入 Firebase
   const newMessageRef = db.ref('messages').push();
   newMessageRef.set({
     name: name,
-    avatar: currentAvatar, // 儲存頭像設定
+    avatar: currentAvatar, // Use selected avatar
     message: message,
     ip: userIP,
     likes: 0,
-    password: password,
     time: new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })
   }).then(() => {
     document.getElementById("message").value = "";
-    document.getElementById("deletePassword").value = "";
-    // 不用手動 loadMessages，因為有監聽器
   }).catch(err => {
     console.error("留言送出錯誤:", err);
     alert("留言失敗，請檢查 Firebase 設定");
   });
 }
 
-function deleteMessage(id) {
-  const password = prompt("請輸入刪除密碼：");
-  if (!password) return;
-
-  // 先讀取該留言確認密碼
-  db.ref('messages/' + id).once('value').then(snapshot => {
-    const data = snapshot.val();
-    if (!data) {
-      alert("留言不存在");
-      return;
-    }
-
-    if (data.password === password) {
-      db.ref('messages/' + id).remove()
-        .then(() => alert("刪除成功！"))
-        .catch(err => alert("刪除失敗: " + err));
-    } else {
-      alert("密碼錯誤");
-    }
-  });
-}
+// Make functions globally available
+window.deleteMessage = function (id) {
+  console.log("Attempting to delete message:", id);
+  if (confirm("確定要刪除這則留言嗎？")) {
+    db.ref('messages/' + id).remove()
+      .then(() => {
+        console.log("Delete successful");
+        alert("刪除成功！");
+      })
+      .catch(err => {
+        console.error("Delete failed:", err);
+        alert("刪除失敗: " + err);
+      });
+  } else {
+    console.log("Delete cancelled by user");
+  }
+};
 
 function likeMessage(id, currentLikes, btn) {
   // 播放動畫
@@ -159,10 +179,13 @@ function listenForMessages() {
       }
 
       // 決定頭像 URL
-      let avatarUrl = `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${item.name}`;
-      if (item.avatar && item.avatar !== "other") {
-        // 使用固定的可愛頭像 Seed
-        avatarUrl = `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${item.avatar}`;
+      let avatarUrl = "";
+      if (['JACK', 'Kuromi', 'MyMelody', 'Pompompurin', 'Cinnamoroll'].includes(item.avatar)) {
+        avatarUrl = `images/${item.avatar.toLowerCase()}.png`;
+      } else if (item.avatar === 'LUZIA') {
+        avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=LUZIA`;
+      } else {
+        avatarUrl = `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${item.name}`;
       }
 
       container.innerHTML += `
@@ -193,19 +216,34 @@ function listenForMessages() {
 
 window.onload = function () {
   listenForMessages();
+  initAvatarSelector();
 
-  // 讀取深色模式設定
-  if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark-mode");
-    document.getElementById("theme-toggle").textContent = "☀️";
+  // 讀取已儲存的暱稱
+  const savedName = localStorage.getItem("nickname");
+  if (savedName) {
+    document.getElementById("nickname").value = savedName;
+  }
+
+  // 讀取桌布設定
+  const savedWallpaper = localStorage.getItem("wallpaper");
+  if (savedWallpaper) {
+    document.body.style.backgroundImage = savedWallpaper;
   }
 };
 
-function toggleTheme() {
-  const body = document.body;
-  body.classList.toggle("dark-mode");
+const wallpapers = [
+  "url('images/background.png')",
+  "linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)", // Blue gradient
+  "linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)", // Sunset gradient
+  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)", // Purple-Blue
+  "linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%)"  // Pink-Blue
+];
 
-  const isDark = body.classList.contains("dark-mode");
-  document.getElementById("theme-toggle").textContent = isDark ? "☀️" : "🌙";
-  localStorage.setItem("theme", isDark ? "dark" : "light");
+let currentWallpaperIndex = 0;
+
+function changeWallpaper() {
+  currentWallpaperIndex = (currentWallpaperIndex + 1) % wallpapers.length;
+  const newWallpaper = wallpapers[currentWallpaperIndex];
+  document.body.style.backgroundImage = newWallpaper;
+  localStorage.setItem("wallpaper", newWallpaper);
 }

@@ -3,66 +3,43 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- 加入 maximum-scale=1.0 與 user-scalable=no 限制縮放，讓版面在手機上更穩定 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>庫洛米留言板</title>
   <link rel="stylesheet" href="style.css">
-  <!-- 可根據需要加入一些內嵌調整(非必要，可在 style.css 裡調整) -->
-  <style>
-    /* 確保手機上容器左右邊距較窄 */
-    body {
-      padding: 5px;
-    }
-
-    .container {
-      padding: 15px;
-      margin: 10px auto;
-    }
-  </style>
 </head>
 
 <body>
   <div class="container">
     <header>
-      <!-- 移除了大圖或 Logo，只保留簡潔標題 -->
       <h1>庫洛米留言板 ❤️</h1>
       <div class="header-controls">
-        <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
-      </div>
-    </header>
-    <main>
-      <section class="form-section">
-        <textarea id="message" placeholder="說點什麼..." rows="3"></textarea>
-
-        <div class="name-select">
-          <p class="label-text">選擇你的角色：</p>
-          <div class="avatar-selector">
-            <button class="avatar-option selected" onclick="selectAvatar('Kuromi', this)" title="酷洛米">😈</button>
-            <button class="avatar-option" onclick="selectAvatar('MyMelody', this)" title="美樂蒂">🐰</button>
-            <button class="avatar-option" onclick="selectAvatar('Baku', this)" title="巴庫">🦇</button>
-            <button class="avatar-option" onclick="selectAvatar('other', this)" title="其他">👤</button>
-          </div>
-          <input type="text" id="customName" placeholder="請輸入你的名字" style="display:none;">
-        </div>
-
-        <div class="password-group">
-          <input type="password" id="deletePassword" placeholder="設定刪除密碼 (選填)">
-        </div>
+        <button id="wallpaper-btn" class="theme-btn" onclick="changeWallpaper()" title="更換背景">🎨 更換背景</button>
         <div class="stickers">
-          <button onclick="addSticker('😍')">😍</button>
           <button onclick="addSticker('😂')">😂</button>
           <button onclick="addSticker('😎')">😎</button>
           <button onclick="addSticker('🤔')">🤔</button>
           <button onclick="addSticker('😭')">😭</button>
         </div>
-        <button class="submit-btn" onclick="submitMessage()">送出留言</button>
-      </section>
-      <section id="messages" class="messages-section"></section>
-    </main>
+      </div>
+
+      <div class="avatar-selector" id="avatar-selector">
+        <!-- Avatars will be injected by script.js -->
+      </div>
+
+      <div class="input-area">
+        <input type="text" id="nickname" placeholder="你的暱稱 (選填)" class="nickname-input">
+        <textarea id="message" placeholder="留下你的訊息..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitMessage()">送出留言</button>
+    </header>
+
+    <section id="messages" class="messages-section"></section>
+
     <footer>
       <p>© 2025 庫洛米留言板 All Rights Reserved</p>
     </footer>
   </div>
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
