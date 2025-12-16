@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "messages": {
+      ".read": true,
+      ".write": "auth != null",
+      "$messageId": {
+        ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['name', 'message', 'time', 'uid'])"
+      }
+    }
+  }
+}

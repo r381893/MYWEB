@@ -13,6 +13,66 @@ const firebaseConfig = {
 // 初始化 Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const auth = firebase.auth();
+
+// 當前登入使用者
+let currentUser = null;
+
+// 監聽登入狀態變化
+auth.onAuthStateChanged((user) => {
+  currentUser = user;
+  updateAuthUI(user);
+});
+
+// 更新 UI 根據登入狀態
+function updateAuthUI(user) {
+  const loginBtn = document.getElementById('login-btn');
+  const userInfo = document.getElementById('user-info');
+  const userAvatar = document.getElementById('user-avatar');
+  const userName = document.getElementById('user-name');
+  const loginRequiredMsg = document.getElementById('login-required-msg');
+  const submitBtn = document.querySelector('.submit-btn');
+
+  if (user) {
+    // 已登入
+    loginBtn.style.display = 'none';
+    userInfo.style.display = 'flex';
+    userAvatar.src = user.photoURL || 'images/kuromi.png';
+    userName.textContent = user.displayName || '使用者';
+    if (loginRequiredMsg) loginRequiredMsg.style.display = 'none';
+    if (submitBtn) submitBtn.disabled = false;
+  } else {
+    // 未登入
+    loginBtn.style.display = 'block';
+    userInfo.style.display = 'none';
+    if (loginRequiredMsg) loginRequiredMsg.style.display = 'block';
+    if (submitBtn) submitBtn.disabled = false; // 保持可點擊，但會提示登入
+  }
+}
+
+// Google 登入
+function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      console.log('登入成功:', result.user.displayName);
+    })
+    .catch((error) => {
+      console.error('登入失敗:', error);
+      alert('登入失敗: ' + error.message);
+    });
+}
+
+// 登出
+function signOutUser() {
+  auth.signOut()
+    .then(() => {
+      console.log('已登出');
+    })
+    .catch((error) => {
+      console.error('登出失敗:', error);
+    });
+}
 
 let userIP = "Unknown";
 fetch("https://api.ipify.org?format=json")
@@ -23,6 +83,7 @@ fetch("https://api.ipify.org?format=json")
 // Avatar Configuration
 const avatars = ['Kuromi', 'MyMelody', 'Pompompurin', 'Cinnamoroll', 'JACK'];
 let currentAvatar = 'Kuromi'; // Default
+
 
 function initAvatarSelector() {
   const container = document.getElementById('avatar-selector');
@@ -68,16 +129,24 @@ function addSticker(emoji) {
 }
 
 function submitMessage() {
+  // 檢查是否已登入
+  if (!currentUser) {
+    alert("請先登入才能留言！");
+    return;
+  }
+
   const message = document.getElementById("message").value.trim();
   if (!message) {
     alert("請輸入留言");
     return;
   }
 
-  let name = document.getElementById("nickname").value.trim() || "匿名";
-  localStorage.setItem("nickname", name !== "匿名" ? name : ""); // 記住暱稱
+  // 使用 Google 帳號名稱或自訂暱稱
+  let customName = document.getElementById("nickname").value.trim();
+  let name = customName || currentUser.displayName || "使用者";
+  localStorage.setItem("nickname", customName); // 記住暱稱
 
-  // 寫入 Firebase
+  // 寫入 Firebase (包含 uid)
   const newMessageRef = db.ref('messages').push();
   newMessageRef.set({
     name: name,
@@ -85,17 +154,29 @@ function submitMessage() {
     message: message,
     ip: userIP,
     likes: 0,
+    uid: currentUser.uid, // 加入使用者 ID
     time: new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })
   }).then(() => {
     document.getElementById("message").value = "";
   }).catch(err => {
     console.error("留言送出錯誤:", err);
-    alert("留言失敗，請檢查 Firebase 設定");
+    alert("留言失敗: " + err.message);
   });
 }
 
 // Make functions globally available
-window.deleteMessage = function (id) {
+window.deleteMessage = function (id, messageUid) {
+  // 檢查是否為訊息作者
+  if (!currentUser) {
+    alert("請先登入！");
+    return;
+  }
+
+  if (currentUser.uid !== messageUid) {
+    alert("您只能刪除自己的留言！");
+    return;
+  }
+
   console.log("Attempting to delete message:", id);
   if (confirm("確定要刪除這則留言嗎？")) {
     db.ref('messages/' + id).remove()
@@ -216,7 +297,7 @@ function listenForMessages() {
           <div class="actions">
             <button class="like-btn" onclick="likeMessage('${item.id}', ${item.likes}, this)">❤️ <span>${item.likes || 0}</span></button>
             <button class="reply-btn" onclick="toggleReply('${item.id}')">💬 回覆 ${replyCount > 0 ? `(${replyCount})` : ''}</button>
-            <button class="delete-btn" onclick="deleteMessage('${item.id}')">🗑️ 刪除</button>
+            ${currentUser && currentUser.uid === item.uid ? `<button class="delete-btn" onclick="deleteMessage('${item.id}', '${item.uid}')">🗑️ 刪除</button>` : ''}
           </div>
 
           <div id="reply-${item.id}" class="reply-section" style="display:none;">
@@ -227,6 +308,7 @@ function listenForMessages() {
             </div>
           </div>
         </div>
+
       `;
     });
   });
