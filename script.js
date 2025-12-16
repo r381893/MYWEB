@@ -74,6 +74,10 @@ function signOutUser() {
     });
 }
 
+// 將函數綁定到全域 window 物件
+window.signInWithGoogle = signInWithGoogle;
+window.signOutUser = signOutUser;
+
 let userIP = "Unknown";
 fetch("https://api.ipify.org?format=json")
   .then(res => res.json())
